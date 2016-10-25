@@ -1,0 +1,45 @@
+version: '2'
+
+services:
+
+  proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      
+  db:
+    image: postgres
+    env_file: .env
+
+  as:
+    image: dina/nub:v0.1
+    environment:
+      - VIRTUAL_HOST=nub.local
+    depends_on:
+      - db
+
+  ws:
+    image: nginx
+
+  rabbit:
+    image: rabbitmq
+    env_file: .env
+    hostname: rabbit
+    container_name: rabbit
+
+  neo:
+    image: neo4j
+    env_file: .env
+    hostname: neo
+    container_name: neo
+
+  solr:
+    image: solr
+    env_file: .env
+    hostname: solr
+    container_name: solr
+

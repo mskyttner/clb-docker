@@ -1,0 +1,18 @@
+<settings>
+  <profiles>
+    <profile>
+      <id>clb-local</id>
+      <properties>
+        <checklistbank.db.host>clb</checklistbank.db.host>
+        <checklistbank.db.name>clb</checklistbank.db.name>
+        <checklistbank.db.username>postgres</checklistbank.db.username>
+        <checklistbank.db.password>passw0rd12</checklistbank.db.password>
+	<rabbit.host>rabbit</rabbit.host>
+	<rabbit.vhost>rabbit</rabbit.vhost>
+	<rabbit.username>guest</rabbit.username>
+	<rabbit.password>guest</rabbit.password>
+	<neo.repository>neo</neo.repository>
+      </properties>
+    </profile>
+  </profiles>
+</settings>
