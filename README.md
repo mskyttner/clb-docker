@@ -1,3 +1,28 @@
+# nub-docker
+
+Dockerized build for GBIF taxonomy tools - checklistbank
+
+Beware - this is work in progress!
+
+# TODO
+
+- deploy build artefacts (.jar)
+- load data from DarwinCare Archives using the cli?
+- automate subset extraction from http://dl.dropbox.com/u/523458/Dyntaxa/Archive.zip (dataset from 2012-March-08)
+
+# Further Reading
+
+Documentation here:
+
+https://github.com/gbif/checklistbank/tree/master/docs
+http://gbif.blogspot.de/2016/04/updating-gbif-backbone.html
+http://gbif.blogspot.de/2016/08/gbif-backbone-august-2016-update.html
+http://gbif.blogspot.de/2015/03/improving-gbif-backbone-matching.html
+
+# Known issues
+
+One test fails - seems to require some "rabbitmq" config that currently fails:
+
 testStartUp(org.gbif.checklistbank.cli.importer.ImporterServiceIT)  Time elapsed: 4.545 sec  <<< ERROR!
 java.io.IOException: null
 	at com.rabbitmq.utility.ValueOrException.getValue(ValueOrException.java:67)
@@ -22,28 +47,4 @@ Caused by: java.net.SocketException: Connection reset
 	at com.rabbitmq.client.impl.Frame.readFrom(Frame.java:95)
 	at com.rabbitmq.client.impl.SocketFrameHandler.readFrame(SocketFrameHandler.java:131)
 	at com.rabbitmq.client.impl.AMQConnection$MainLoop.run(AMQConnection.java:515)
-
-
-
-
-Unless you have done so it would be good if you had a look at the data model and the minimal documentation that we currently have:
-https://github.com/gbif/checklistbank/tree/master/docs
-
-http://gbif.blogspot.de/2016/04/updating-gbif-backbone.html
-http://gbif.blogspot.de/2016/08/gbif-backbone-august-2016-update.html
-http://gbif.blogspot.de/2015/03/improving-gbif-backbone-matching.html
-
-I hope I find some time beforehand to better document the indexing & backbone building setup & features.
- But time is moving fast so I am not sure how far I can get by then.
-
-
-
-In case you wanna dive into the gory coding details here are the open issues for ChecklistBank & Backbone building:
-http://dev.gbif.org/issues/issues/?filter=13400
-http://dev.gbif.org/issues/issues/?filter=12200
-
-Quite a few of them are true content issues we haven’t tagged accordingly, so you can skip over many of them.
-
-And this for the next backbone building sprint:
-http://dev.gbif.org/issues/browse/POR-3156
 
