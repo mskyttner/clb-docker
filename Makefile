@@ -1,15 +1,15 @@
+#!make
 include .env
 
 NAME = dina/nub
 VERSION = $(TRAVIS_BUILD_ID)
 ME = $(USER)
 HOST = nub.local
+MVN := maven:3.3.9-jdk-8
 TS := $(shell date '+%Y_%m_%d_%H_%M')
 PWD := $(shell pwd)
-MVN := maven:3.3.9-jdk-8
 USR := $(shell id -u)
 GRP := $(shell id -g)
-
 
 NUB_URL$ = https://github.com/gbif/checklistbank
 
@@ -53,8 +53,7 @@ start-solr:
 	@docker-compose up -d solr
 	docker network connect --alias solr multi-host-network solr
 
-
-build: start-db build-maven build-docker
+build: start-db build-maven
 
 build-maven: 
 	@echo "Building with mvn, be patient... half an hour?"	
@@ -115,5 +114,5 @@ dox:
 	docker pull humangeo/aglio
 	docker run -ti --rm -v $(PWD)/:/docs humangeo/aglio \
 		aglio -i apiary.apib -o nub-reference.html
-	sudo chown $(USR):$(USR) collections-api-reference.html
+	sudo chown $(USR):$(USR) nub-reference.html
 

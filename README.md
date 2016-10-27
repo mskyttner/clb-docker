@@ -21,30 +21,31 @@ The docker-compose.yml file provides components (NOUNs), for example:
 	solr
 	nginx reverse proxy
 
+To build, for now do:
+	
+	git clone --depth=1 $REPOSLUG
+	cd nub-docker
+	make network
+	make build
+
+
 # TODO
 
-- deploy build artifacts (.jar)
-- add zookeeper?
-- config rabbitmq
+- deploy build artifacts (.jar) or perhaps just provide a "cli" container that allows for automated workflows
+- add zookeeper? what is it needed for?
+- config rabbitmq properly
 - load data from DarwinCare Archives using the cli?
 - automate subset extraction from http://dl.dropbox.com/u/523458/Dyntaxa/Archive.zip (dataset from 2012-March-08)
 
 # Ideas / Discussion
 
-- remove unneeded components
-- make it less dependant on some GBIF components (zookeeper)
-- you can use NCBI 
-- can evolve fuzzy search matching
-- name based -- doesn't manage "taxon concepts" in the same way as Dyntaxa, PlutoF -- has preferred name...
-- 4 times a year generate the backbone approx 40 sources CoL is the first one others are merged into that one automatically
+- Regarding dl of relevant checklists/classficiations, such as NCBI, what are the urls for those? 
 
-## Low tech approach to maintain local taxonomy
+## Low tech approach to maintain local taxonomy or "storage classification" checklist
 
-- Load data from text file, version with git, could get some workflow up in a cuople of months?
-- schedule upload to checklistbank
-- build a ui to allow export in that format
-
-
+- Load data from text file in clb, could be versioned with git
+- Build a ui to allow export in that format
+- Schedule daily(?) upload to checklistbank via text file generated from taxonomy ui
 
 # Known issues
 
