@@ -32,7 +32,7 @@ To build, for now do:
 # TODO
 
 - deploy build artifacts (.jar) or perhaps just provide a "cli" container that allows for automated workflows
-- add zookeeper? what is it needed for?
+- add zookeeper? what is it needed for? see https://github.com/gbif/checklistbank/blob/master/docs/INDEXING.md#messaging-flow
 - config rabbitmq properly
 - load data from DarwinCare Archives using the cli?
 - automate subset extraction from http://dl.dropbox.com/u/523458/Dyntaxa/Archive.zip (dataset from 2012-March-08)

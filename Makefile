@@ -73,6 +73,15 @@ build-maven:
 		#mvn -X clean install -rf :checklistbank-mybatis-service
 	@find . -name *.jar | grep "target" | grep -v "surefire" | grep -v "SNAPSHOT"
 
+build-db:
+	cd checklistbank && docker run -it --rm --name my-maven-project \
+		--net=multi-host-network \
+		-v $(PWD)/checklistbank:/usr/src/mymaven \
+		-v $(PWD)/settings.xml:/root/.m2/settings.xml \
+		-v $(PWD)/repository:/root/.m2/repository \
+		-w /usr/src/mymaven \
+		$(MVN) mvn -P clb-local liquibase:update
+
 build-docker:
 	@echo "Building image(s)..."
 	@docker build -t dina/nub:v0.1 nub
