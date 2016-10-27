@@ -43,3 +43,9 @@ services:
     hostname: solr
     container_name: solr
 
+  zoo:
+    image: zookeeper:3.4.9
+    env_file: .env
+    hostname: zoo
+    container_name: zoo
+
