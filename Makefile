@@ -25,14 +25,10 @@ init:
 
 	@git clone --depth=1 $(NUB_URL)
 
-network:
-	docker network create multi-host-network
-
 start-db:
 	@docker-compose up -d db
 	@docker exec -it nubdocker_db_1 \
 		psql -U $(POSTGRES_USER) template1 -c 'create extension hstore;'
-	@docker network connect --alias clb multi-host-network nubdocker_db_1
 
 connect-db:
 	docker exec -it nubdocker_db_1 \
@@ -53,34 +49,15 @@ start-solr:
 	@docker-compose up -d solr
 	docker network connect --alias solr multi-host-network solr
 
-build: start-db build-maven
-
-build-maven: 
-	@echo "Building with mvn, be patient... half an hour?"	
-	docker pull $(MVN)
-	mkdir -p $(PWD)/repository
-	cd checklistbank && docker run -it --rm --name my-maven-project \
-		--net=multi-host-network \
-		-v $(PWD)/checklistbank:/usr/src/mymaven \
-		-v $(PWD)/settings.xml:/root/.m2/settings.xml \
-		-v $(PWD)/repository:/root/.m2/repository \
-		-w /usr/src/mymaven \
-		$(MVN) mvn -P clb-local clean install -DskipTests=true
-		#mvn -X -P clb-local --resume-from checklistbank-cli install -DskipTests=true
-		#mvn -P clb-local liquibase:update
-		#mvn -X -P clb-local clean install
-		#-u $(USR):$(GRP) \
-		#mvn -X clean install -rf :checklistbank-mybatis-service
+build-clb: start-db
+	@docker-compose run maven
+	#@docker-compose run maven sh -c "mvn -P clb-local liquibase:update"
 	@find . -name *.jar | grep "target" | grep -v "surefire" | grep -v "SNAPSHOT"
 
-build-db:
-	cd checklistbank && docker run -it --rm --name my-maven-project \
-		--net=multi-host-network \
-		-v $(PWD)/checklistbank:/usr/src/mymaven \
-		-v $(PWD)/settings.xml:/root/.m2/settings.xml \
-		-v $(PWD)/repository:/root/.m2/repository \
-		-w /usr/src/mymaven \
-		$(MVN) mvn -P clb-local liquibase:update
+build-more:
+	@docker-compose run maven \
+		bash
+#		sh -c "cd /usr/src/mymaven/checklist-mybatis-service && mvn -P clb-local liquibase:update"
 
 build-docker:
 	@echo "Building image(s)..."

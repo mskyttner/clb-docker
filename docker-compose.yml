@@ -15,6 +15,14 @@ services:
     image: postgres
     env_file: .env
 
+  maven:
+    image: maven:3.3.9-jdk-8
+    volumes:
+      - ./checklistbank:/usr/src/mymaven
+      - ./settings.xml:/root/.m2/settings.xml
+      - ./repository:/root/.m2/repository
+    command: sh -c "cd /usr/src/mymaven && mvn -P clb-local clean install -DskipTests=true"
+
   as:
     image: dina/nub:v0.1
     environment:

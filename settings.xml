@@ -3,7 +3,7 @@
     <profile>
       <id>clb-local</id>
       <properties>
-        <checklistbank.db.host>clb</checklistbank.db.host>
+        <checklistbank.db.host>db</checklistbank.db.host>
         <checklistbank.db.name>clb</checklistbank.db.name>
         <checklistbank.db.username>postgres</checklistbank.db.username>
         <checklistbank.db.password>passw0rd12</checklistbank.db.password>
