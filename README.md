@@ -28,6 +28,18 @@ To build, for now do:
 	make network
 	make build
 
+To start the checklistbank web service do:
+
+	docker-compose up -d clbws
+
+Then inspect the logs with:
+
+	docker-compose logs clbws
+
+You should see something like:
+
+	clbws_1    | 13:37:03.699 [main] INFO org.eclipse.jetty.server.Server - Started @6965ms
+
 
 # TODO
 
