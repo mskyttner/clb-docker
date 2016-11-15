@@ -53,26 +53,23 @@ start-solr:
 	@docker-compose up -d solr
 	docker network connect --alias solr multi-host-network solr
 
-build: start-db build-clb
+build: start-db build-nub build-clbws build-clbcli
 
-build-clb:
+build-nub:
 	@docker-compose run maven \
 		sh -c "cd /usr/src/mymaven && \
 		mvn -P clb-local clean install -DskipTests=true"
-	#@docker-compose run maven
-	#@docker-compose run maven sh -c "mvn -P clb-local liquibase:update"
 	@find . -name *.jar | grep "target"
-
-build-more:
-	@docker-compose run maven \
-		bash
-#		sh -c "cd /usr/src/mymaven/checklist-mybatis-service && mvn -P clb-local liquibase:update"
 
 build-clbws:
 	@echo "Building image(s)..."
-	@cp $(PWD)/checklistbank/checklistbank-ws/target/checklistbank-ws-2.46-SNAPSHOT.jar \
-		$(PWD)/clb-ws/checklistbank-ws.jar
-	@docker build -t dina/nub:v0.1 clb-ws
+	@cp checklistbank/checklistbank-ws/target/checklistbank-ws-2.46-SNAPSHOT.jar \
+		clb-ws/checklistbank-ws.jar
+	@docker build -t dina/clbws:v0.1 clb-ws
+
+build-clbcli:
+	@cp checklistbank/checklistbank-cli/target/checklistbank-cli.jar cli
+	@docker build -t dina/clbcli:v0.1 cli
 
 up:
 	@echo "Starting services..."
@@ -81,18 +78,12 @@ up:
 test-clbws:
 	@xdg-open http://nub:9000
 
-test-solr:
-	@docker exec -it nub sh -c \
-		"curl http://localhost:8983/solr/admin/cores?status" > solr.xml && \
-		firefox solr.xml
-test:
-	@echo "Opening up... did you add ala.local in /etc/hosts?"
-	#@curl -H "Host: ala.local" localhost/collectory/
-	./wait-for-it.sh ala.local:80 -q -- xdg-open http://ala.local/collectory/ &
+test-clbcli:
+	@docker-compose run clbcli bash
 
-stop:
+down:
 	@echo "Stopping services..."
-	@docker-compose stop
+	@docker-compose down
 
 clean:
 	@echo "Removing downloaded files and build artifacts"
@@ -105,7 +96,8 @@ rm: stop
 	#sudo rm -rf mysql-datadir cassandra-datadir initdb lucene-datadir
 
 push:
-	@docker push dina/nub:v0.1
+	@docker push dina/clbws:v0.1
+	@docker push dina/clbcli:v0.1
 
 release: build push
 
