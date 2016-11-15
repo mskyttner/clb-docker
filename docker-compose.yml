@@ -10,8 +10,17 @@ services:
       - "443:443"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  dnsdock:
+#    image: tonistiigi/dnsdock:amd64-1.13.1
+    image: aacebedo/dnsdock:v1.15.0-amd64
+    ports:
+      - 172.17.0.1:53:53/udp
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
       
   db:
+    container_name: db
     image: postgres
     env_file: .env
 
@@ -21,12 +30,12 @@ services:
       - ./checklistbank:/usr/src/mymaven
       - ./settings.xml:/root/.m2/settings.xml
       - ./repository:/root/.m2/repository
-    command: sh -c "cd /usr/src/mymaven && mvn -P clb-local clean install -DskipTests=true"
 
-  as:
+  clbws:
     image: dina/nub:v0.1
     environment:
       - VIRTUAL_HOST=nub.local
+      - DNSDOCK_ALIAS=nub.local
     depends_on:
       - db
 
