@@ -78,7 +78,10 @@ up:
 	@echo "Starting services..."
 	@docker-compose up -d
 
-test-nub:
+test-clbws:
+	@xdg-open http://nub:9000
+
+test-solr:
 	@docker exec -it nub sh -c \
 		"curl http://localhost:8983/solr/admin/cores?status" > solr.xml && \
 		firefox solr.xml
