@@ -19,11 +19,15 @@ all: init build up
 init:
 	@echo "Caching files required for the build..."
 
-	@curl --progress -L -s -o wait-for-it.sh \
-		https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh && \
-		chmod +x wait-for-it.sh
+	@test -f wait-for-it.sh || \
+		curl --progress -L -s -o wait-for-it.sh \
+			https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh && \
+			chmod +x wait-for-it.sh
 
-	@git clone --depth=1 $(NUB_URL)
+	@test -d checklistbank || \
+		git clone --depth=1 $(NUB_URL) checklistbank
+
+	#@cp pom.xml checklistbank 
 
 start-db:
 	@docker-compose up -d db
