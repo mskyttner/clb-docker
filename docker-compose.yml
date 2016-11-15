@@ -32,7 +32,7 @@ services:
       - ./repository:/root/.m2/repository
 
   clbws:
-    image: dina/nub:v0.1
+    image: dina/clbws:v0.1
     environment:
       - VIRTUAL_HOST=clbws
       - DNSDOCK_ALIAS=clbws
@@ -41,6 +41,11 @@ services:
     ports:
       - 9000
       - 9001
+
+  clbcli:
+    image: dina/clbcli:v0.1
+    depends_on:
+      - db
 
   ws:
     image: nginx
