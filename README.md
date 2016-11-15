@@ -44,6 +44,7 @@ You should see something like:
 # TODO
 
 - deploy build artifacts (.jar) or perhaps just provide a "cli" container that allows for automated workflows
+- add postgres dump and load functionality
 - add zookeeper? what is it needed for? see https://github.com/gbif/checklistbank/blob/master/docs/INDEXING.md#messaging-flow
 - config rabbitmq properly
 - load data from DarwinCare Archives using the cli?
