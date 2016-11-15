@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<configuration>
+	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+		<resetJUL>true</resetJUL>
+	</contextListener>
+	<property name="defaultPattern" value="%-5level [%date{'yyyy-MM-dd HH:mm:ss,SSS'}] [%thread] %logger [%X{dataset}] %msg%n%xEx"/>
+	<appender name="SOCKET" class="ch.qos.logback.classic.net.SocketAppender">
+		<remoteHost>logstash.gbif.org</remoteHost>
+		<port>10821</port>
+		<reconnectionDelay>10000</reconnectionDelay>
+		<includeCallerData>false</includeCallerData>
+	</appender>
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>../logs/clb-analysis.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>../logs/clb-analysis.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+			<maxHistory>14</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>${defaultPattern}</pattern>
+		</encoder>
+	</appender>
+	<logger name="org.apache.zookeeper" level="WARN"/>
+	<logger name="org.apache.http" level="WARN"/>
+	<logger name="com.netflix.curator.framework" level="WARN"/>
+	<logger name="com.google.inject.internal.ProxyFactory" level="ERROR"/>
+	<logger name="org.gbif.checklistbank.service.mybatis.mapper" level="INFO"/>
+	<root level="INFO">
+		<appender-ref ref="FILE"/>
+		<appender-ref ref="SOCKET"/>
+	</root>
+</configuration>

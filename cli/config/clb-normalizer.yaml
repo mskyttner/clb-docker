@@ -1,0 +1,26 @@
+poolSize: 2
+ganglia:
+  host: ganglia
+  port: 8649
+messaging:
+  host: rabbit
+  virtualHost: /uat
+  username: clb
+  password: passw0rd12
+neo:
+  neoRepository: /usr/src/myapp/neo
+  mappedMemory: 4096
+  cacheType: SOFT
+zookeeper:
+  connectionString: zoo1,zoo2,zoo3
+  namespace: uat_crawler
+clb:
+  serverName: db
+  databaseName: clb
+  user: clb
+  password: passw0rd12
+  maximumPoolSize: 2
+  connectionTimeout: 2000
+  minimumIdle: 0
+  idleTimeout: 60000
+archiveRepository: /usr/src/myapp/storage/dwca

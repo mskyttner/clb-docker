@@ -1,0 +1,22 @@
+poolSize: 3
+ganglia:
+  host: ganglia
+  port: 8649
+messaging:
+  host: rabbit
+  virtualHost: /uat
+  username: clb
+  password: passw0rd12
+clb:
+  serverName: db
+  databaseName: clb
+  user: clb
+  password: passw0rd12
+  maximumPoolSize: 12
+  connectionTimeout: 2000
+  minimumIdle: 0
+  idleTimeout: 60000
+solr:
+  serverType: CLOUD
+  serverHome: zoo1:2181,zoo2:2181,zoo3:2181/uatsolr
+  collection: clb

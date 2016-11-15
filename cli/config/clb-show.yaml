@@ -1,0 +1,6 @@
+neo:
+  neoRepository: /usr/src/myapp/neo
+format: TEXT
+file: tree.txt
+fullNames: false
+
