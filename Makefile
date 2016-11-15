@@ -64,8 +64,10 @@ build-more:
 		bash
 #		sh -c "cd /usr/src/mymaven/checklist-mybatis-service && mvn -P clb-local liquibase:update"
 
-build-docker:
+build-clbws:
 	@echo "Building image(s)..."
+	@cp $(PWD)/checklistbank/checklistbank-ws/target/checklistbank-ws-2.46-SNAPSHOT.jar \
+		$(PWD)/clb-ws/checklistbank-ws.jar
 	@docker build -t dina/nub:v0.1 clb-ws
 
 up:
