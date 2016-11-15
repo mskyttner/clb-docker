@@ -27,11 +27,11 @@ init:
 
 start-db:
 	@docker-compose up -d db
-	@docker exec -it nubdocker_db_1 \
+	@docker exec -it db \
 		psql -U $(POSTGRES_USER) template1 -c 'create extension hstore;'
 
 connect-db:
-	docker exec -it nubdocker_db_1 \
+	docker exec -it db \
 		psql -U $(POSTGRES_USER) -d $(POSTGRES_DB)
 
 start-rabbit:
@@ -49,10 +49,15 @@ start-solr:
 	@docker-compose up -d solr
 	docker network connect --alias solr multi-host-network solr
 
-build-clb: start-db
-	@docker-compose run maven
+build: start-db build-clb
+
+build-clb:
+	@docker-compose run maven \
+		sh -c "cd /usr/src/mymaven && \
+		mvn -P clb-local clean install -DskipTests=true"
+	#@docker-compose run maven
 	#@docker-compose run maven sh -c "mvn -P clb-local liquibase:update"
-	@find . -name *.jar | grep "target" | grep -v "surefire" | grep -v "SNAPSHOT"
+	@find . -name *.jar | grep "target"
 
 build-more:
 	@docker-compose run maven \
@@ -61,7 +66,7 @@ build-more:
 
 build-docker:
 	@echo "Building image(s)..."
-	@docker build -t dina/nub:v0.1 nub
+	@docker build -t dina/nub:v0.1 clb-ws
 
 up:
 	@echo "Starting services..."
