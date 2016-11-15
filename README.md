@@ -21,25 +21,25 @@ The docker-compose.yml file provides components (NOUNs), for example:
 	solr
 	nginx reverse proxy
 
-To build, for now do:
+To build and start services, for now do:
 	
 	git clone --depth=1 $REPOSLUG
 	cd nub-docker
-	make network
-	make build
+	make
 
-To start the checklistbank web service do:
+To start all services and inspect the logs of the checklistbank web service do:
 
-	docker-compose up -d clbws
+	make up
+	docker-compose logs -f clbws
 
-Then inspect the logs with:
-
-	docker-compose logs clbws
-
-You should see something like:
+If it started, you should see something like this in the log:
 
 	clbws_1    | 13:37:03.699 [main] INFO org.eclipse.jetty.server.Server - Started @6965ms
 
+To then test the checklistbank web service and CLI use:
+
+	make test-clbws
+	make test-clbcli
 
 # TODO
 
