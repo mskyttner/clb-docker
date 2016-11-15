@@ -34,10 +34,13 @@ services:
   clbws:
     image: dina/nub:v0.1
     environment:
-      - VIRTUAL_HOST=nub.local
-      - DNSDOCK_ALIAS=nub.local
+      - VIRTUAL_HOST=clbws
+      - DNSDOCK_ALIAS=clbws
     depends_on:
       - db
+    ports:
+      - 9000
+      - 9001
 
   ws:
     image: nginx
