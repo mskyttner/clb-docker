@@ -1,4 +1,5 @@
 # nub-docker
+[![AGPLv3 License](http://img.shields.io/badge/license-AGPLv3-blue.svg) ](https://github.com/mskyttner/nub-docker/blob/master/LICENSE)
 
 Dockerized build for GBIF taxonomy tools from here: [checklistbank](https://github.com/gbif/checklistbank)
 
