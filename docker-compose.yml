@@ -26,6 +26,7 @@ services:
   dnsdock:
 #    image: tonistiigi/dnsdock:amd64-1.13.1
     image: aacebedo/dnsdock:v1.15.0-amd64
+    container_name: dnsdock
     ports:
       - 172.17.0.1:53:53/udp
     volumes:
@@ -48,12 +49,16 @@ services:
     env_file: .env
     hostname: rabbit
     container_name: rabbit
+    ports:
+      - 15672
 
   solr:
     image: solr
     env_file: .env
     hostname: solr
     container_name: solr
+    ports:
+      - 8983
 
 #  ws:
 #    image: nginx
@@ -73,6 +78,20 @@ services:
       - 9000
       - 9001
       
+#  nub-ws:
+#    image: gbifs/nubws:v0.1
+#    container_name: nubws
+#    hostname: nubws
+#    environment:
+#      - VIRTUAL_HOST=nubws
+#      - DNSDOCK_ALIAS=nubws
+#    depends_on:
+#      - db
+#      - elk
+#    ports:
+#      - 9002
+#      - 9003
+
   clb-analyzer:
     image: gbifs/clbcli:v0.1
     depends_on:
