@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<configuration>
+	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+		<resetJUL>true</resetJUL>
+	</contextListener>
+
+    <appender name="STASH" class="net.logstash.logback.appender.LogstashSocketAppender">
+        <host>elk</host>
+        <port>5001</port>
+    </appender>
+
+	<logger name="com.google.inject.internal.ProxyFactory" level="ERROR"/>
+	<logger name="org.gbif.checklistbank.cli" level="INFO"/>
+    <root level="INFO">
+		<appender-ref ref="STASH"/>
+	</root>
+</configuration>

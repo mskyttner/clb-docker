@@ -3,12 +3,9 @@
       <resetJUL>true</resetJUL>
   </contextListener>
 
-  <property name="defaultPattern" value="%-5level [%date{'yyyy-MM-dd HH:mm:ss,SSSZ'}] [%thread] %logger: %msg%n%xEx"/>
-
-  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-      <pattern>%-5level %logger{35} - %msg%n%xEx</pattern>
-    </encoder>
+  <appender name="STASH" class="net.logstash.logback.appender.LogstashSocketAppender">
+      <host>elk</host>
+      <port>5001</port>
   </appender>
 
   <logger name="org.apache.zookeeper" level="WARN"/>
@@ -20,7 +17,7 @@
   <logger name="org.gbif.checklistbank.nub" level="DEBUG"/>
   
   <root level="INFO">
-    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="STASH"/>
   </root>
 
 </configuration>

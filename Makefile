@@ -1,7 +1,7 @@
 #!make
 include .env
 
-NAME = dina/clb
+NAME = gbifs/clb
 VERSION = $(TRAVIS_BUILD_ID)
 ME = $(USER)
 HOST = clb.local
@@ -46,30 +46,31 @@ start-neo:
 	@docker-compose up -d neo
 	docker network connect --alias neo multi-host-network neo
 
-connect-neo:
-	docker exec -it neo bin/neo4j-shell
-
 start-solr:
 	@docker-compose up -d solr
 	docker network connect --alias solr multi-host-network solr
 
-build: start-db build-nub build-clbws build-clbcli
+build: start-db build-clb build-images
 
-build-nub:
+build-clb:
 	@docker-compose run maven \
 		sh -c "cd /usr/src/mymaven && \
 		mvn -P clb-local clean install -DskipTests=true"
 	@find . -name *.jar | grep "target"
 
-build-clbws:
-	@echo "Building image(s)..."
-	@cp checklistbank/checklistbank-ws/target/checklistbank-ws-2.46-SNAPSHOT.jar \
-		clb-ws/checklistbank-ws.jar
-	@docker build -t dina/clbws:v0.1 clb-ws
+build-images: build-ws-image build-nub-ws-image build-cli-image
 
-build-clbcli:
-	@cp checklistbank/checklistbank-cli/target/checklistbank-cli.jar cli
-	@docker build -t dina/clbcli:v0.1 cli
+build-ws-image:
+	@echo "Building ws image..."
+	@docker build -t gbifs/clbws:v0.1 ws
+
+build-nub-ws-image:
+	@echo "Building nub-ws image..."
+	@docker build -t gbifs/nubws:v0.1 nub-ws
+
+build-cli-image:
+	@echo "Building cli image..."
+	@docker build -t gbifs/clbcli:v0.1 cli
 
 up:
 	@echo "Starting services..."
@@ -96,8 +97,8 @@ rm: stop
 	#sudo rm -rf mysql-datadir cassandra-datadir initdb lucene-datadir
 
 push:
-	@docker push dina/clbws:v0.1
-	@docker push dina/clbcli:v0.1
+	@docker push gbifs/clbws:v0.1
+	@docker push gbifs/clbcli:v0.1
 
 release: build push
 

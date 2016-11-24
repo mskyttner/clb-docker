@@ -1,0 +1,18 @@
+<configuration>
+  <contextName>ChecklistBank WS</contextName>
+  <jmxConfigurator/>
+
+  <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+    <resetJUL>true</resetJUL>
+  </contextListener>
+
+  <appender name="STASH" class="net.logstash.logback.appender.LogstashSocketAppender">
+      <host>elk</host>
+      <port>5001</port>
+  </appender>
+
+  <root level="DEBUG">
+    <appender-ref ref="STASH"/>
+  </root>
+
+</configuration>

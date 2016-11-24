@@ -1,23 +1,19 @@
-poolSize: 1
-ganglia:
-  host: ganglia
-  port: 8649
 messaging:
   host: rabbit
   virtualHost: /
   username: guest
   password: guest
-neo:
-  neoRepository: /usr/src/clb/neo
-  mappedMemory: 4096
-  cacheType: SOFT
+registry:
+  wsUrl: /usr/local/clb/cli/datasets.txt
 clb:
   serverName: db
   databaseName: clb
   user: postgres
   password: passw0rd12
-  maximumPoolSize: 2
+  maximumPoolSize: 4
   connectionTimeout: 2000
   minimumIdle: 0
   idleTimeout: 60000
-archiveRepository: /usr/src/clb/dwca
+neo:
+  neoRepository: /usr/local/clb/cli/neo
+archiveRepository: /usr/local/clb/cli/dwca
