@@ -1,27 +1,27 @@
 messaging:
   host: rabbit
-  virtualHost: /uat
-  username: clb
-  password: passw0rd12
+  virtualHost: /
+  username: guest
+  password: guest
 neo:
-  neoRepository: /usr/src/myapp/neo
+  neoRepository: /usr/src/clb/neo
   mappedMemory: 8192
   batchSize: 10000
 clb:
   serverName: db
   databaseName: clb
-  user: clb
+  user: postgres
   password: passw0rd12
   maximumPoolSize: 8
   minimumIdle: 0
   idleTimeout: 60000
   connectionTimeout: 2000
 registry:
-  wsUrl: http://registry/v1
+  wsUrl: /usr/src/clb/datasets.txt
 validate: true
 runAssertions: false
 groupBasionyms: true
 keepLonelyAutonyms: false
 keepEmptyImplicitNames: false
 autoImport: false
-reportDir: /usr/src/myapp/logs/nub
+reportDir: /usr/src/clb/logs/nub

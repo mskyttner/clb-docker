@@ -2,4 +2,5 @@
 
 . functions.sh
 
-terminate 'checklistbank-cli.jar'
+pkill -f checklistbank-cli.jar
+#terminate 'checklistbank-cli.jar'

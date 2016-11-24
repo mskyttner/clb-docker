@@ -31,36 +31,11 @@ services:
       - ./settings.xml:/root/.m2/settings.xml
       - ./repository:/root/.m2/repository
 
-  clbws:
-    image: dina/clbws:v0.1
-    environment:
-      - VIRTUAL_HOST=clbws
-      - DNSDOCK_ALIAS=clbws
-    depends_on:
-      - db
-    ports:
-      - 9000
-      - 9001
-
-  clbcli:
-    image: dina/clbcli:v0.1
-    depends_on:
-      - db
-
-  ws:
-    image: nginx
-
   rabbit:
     image: rabbitmq
     env_file: .env
     hostname: rabbit
     container_name: rabbit
-
-  neo:
-    image: neo4j
-    env_file: .env
-    hostname: neo
-    container_name: neo
 
   solr:
     image: solr
@@ -68,9 +43,25 @@ services:
     hostname: solr
     container_name: solr
 
-  zoo:
-    image: zookeeper:3.4.9
-    env_file: .env
-    hostname: zoo
-    container_name: zoo
+  ws:
+    image: nginx
 
+  clbws:
+    image: dina/clbws:v0.1
+    environment:
+      - VIRTUAL_HOST=clbws
+      - DNSDOCK_ALIAS=clbws
+    depends_on:
+      - db
+      - solr
+    ports:
+      - 9000
+      - 9001
+
+  clbcli:
+    image: dina/clbcli:v0.1
+    env_file: .env
+    depends_on:
+      - db
+      - solr
+      - rabbit

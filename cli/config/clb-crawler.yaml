@@ -1,0 +1,10 @@
+poolSize: 1
+messaging:
+  host: rabbit
+  virtualHost: /
+  username: guest
+  password: guest
+registry:
+  wsUrl: /usr/src/clb/datasets.txt
+archiveRepository: /usr/src/clb/dwca
+

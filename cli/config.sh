@@ -1,4 +1,4 @@
-CRAWLER_HOME=/usr/src/myapp
+CLI_HOME=/usr/src/clb
 
 CHECKLISTBANK=LATEST
 CRAWLER=LATEST

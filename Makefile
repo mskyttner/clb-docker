@@ -1,17 +1,17 @@
 #!make
 include .env
 
-NAME = dina/nub
+NAME = dina/clb
 VERSION = $(TRAVIS_BUILD_ID)
 ME = $(USER)
-HOST = nub.local
+HOST = clb.local
 MVN := maven:3.3.9-jdk-8
 TS := $(shell date '+%Y_%m_%d_%H_%M')
 PWD := $(shell pwd)
 USR := $(shell id -u)
 GRP := $(shell id -g)
 
-NUB_URL$ = https://github.com/gbif/checklistbank
+CLB_URL$ = https://github.com/gbif/checklistbank
 
 all: init build up
 .PHONY: all
@@ -25,7 +25,7 @@ init:
 			chmod +x wait-for-it.sh
 
 	@test -d checklistbank || \
-		git clone --depth=1 $(NUB_URL) checklistbank
+		git clone --depth=1 $(CLB_URL) checklistbank
 
 	#@cp pom.xml checklistbank 
 

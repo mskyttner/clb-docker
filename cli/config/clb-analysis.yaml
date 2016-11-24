@@ -1,18 +1,15 @@
-poolSize: 3
-ganglia:
-  host: ganglia
-  port: 8649
+poolSize: 1
 messaging:
   host: rabbit
-  virtualHost: /uat
-  username: clb
-  password: passw0rd12
+  virtualHost: /
+  username: guest
+  password: guest
 clb:
   serverName: db
   databaseName: clb
-  user: clb
+  user: postgres
   password: passw0rd12
-  maximumPoolSize: 4
+  maximumPoolSize: 2
   minimumIdle: 0
   idleTimeout: 60000
   connectionTimeout: 2000

@@ -34,7 +34,7 @@
     <file>logs/checklistbank-ws.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <fileNamePattern>logs/checklistbank-ws.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
-      <maxHistory>14</maxHistory>
+      <maxHistory>7</maxHistory>
     </rollingPolicy>
     <encoder>
       <pattern>${defaultPattern}</pattern>

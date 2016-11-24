@@ -2,8 +2,8 @@
 
 # Check the correct user is used, otherwise the owner of logfiles can be changed.
 check_user() {
-    if [[ `whoami` != 'root' ]]; then
-        echo "These scripts must only be run as the 'root' user."
+    if [[ `whoami` == 'root' ]]; then
+        echo "These scripts must only be run as the 'crap' user."
         exit 1
     fi
 }

@@ -4,17 +4,11 @@
 		<resetJUL>true</resetJUL>
 	</contextListener>
 	<property name="defaultPattern" value="%-5level [%date{'yyyy-MM-dd HH:mm:ss,SSS'}] [%thread] %logger [%X{dataset}] %msg%n%xEx"/>
-	<appender name="SOCKET" class="ch.qos.logback.classic.net.SocketAppender">
-		<remoteHost>logstash.gbif.org</remoteHost>
-		<port>10823</port>
-		<reconnectionDelay>10000</reconnectionDelay>
-		<includeCallerData>false</includeCallerData>
-	</appender>
 	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>../logs/clb-normalizer.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<fileNamePattern>../logs/clb-normalizer.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
-			<maxHistory>14</maxHistory>
+			<maxHistory>7</maxHistory>
 		</rollingPolicy>
 		<encoder>
 			<pattern>${defaultPattern}</pattern>
@@ -29,7 +23,5 @@
     <logger name="org.gbif.checklistbank.cli.normalizer" level="DEBUG"/>
 	<root level="INFO">
 		<appender-ref ref="FILE"/>
-		<appender-ref ref="SOCKET"/>
-		<appender-ref ref="SMTP"/>
 	</root>
 </configuration>

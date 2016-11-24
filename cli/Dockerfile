@@ -4,21 +4,20 @@ ENV JAVA_OPTIONS="-Xms256m -Xmx512m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOcc
 
 RUN apk add --update --no-cache tini bash
 
-# use a user called "crap" if possible
+RUN mkdir -p /usr/src/clb && \
+	cd /usr/src/clb && \
+	mkdir -p bin lib logs neo dwca
 
-RUN mkdir -p /usr/src/myapp && \
-	cd /usr/src/myapp && \
-	mkdir -p bin lib logs neo storage/dwca
+WORKDIR /usr/src/clb
 
-WORKDIR /usr/src/myapp
-
+ADD datasets.txt .
 ADD config.sh .
 ADD bin bin
 ADD config config
 ADD lib lib
 ADD checklistbank-cli.jar lib
 
-WORKDIR /usr/src/myapp/bin
+WORKDIR /usr/src/clb/bin
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ./start-clb.sh
 

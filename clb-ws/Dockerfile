@@ -4,8 +4,8 @@ ENV JAVA_OPTIONS="-Xms256m -Xmx512m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOcc
 
 RUN apk add --update --no-cache tini
 
-RUN mkdir -p /usr/src/myapp/conf && cd /usr/src/myapp
-WORKDIR /usr/src/myapp
+RUN mkdir -p /usr/src/clb/conf && cd /usr/src/clb
+WORKDIR /usr/src/clb
 ADD application.properties .
 ADD conf .
 ADD checklistbank-ws.jar .
