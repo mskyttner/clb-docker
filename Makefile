@@ -54,8 +54,7 @@ connect-db:
 		psql -U $(POSTGRES_USER) -d $(POSTGRES_DB)
 
 connect-cli:
-	docker run -it --name=cli-admin gbifs/clbcli:v0.1 /bin/bash
-
+	docker-compose run clb-admin /bin/bash
 
 
 test-clbws:

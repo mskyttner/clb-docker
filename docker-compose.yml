@@ -60,9 +60,6 @@ services:
     ports:
       - 8983
 
-#  ws:
-#    image: nginx
-
   ws:
     image: gbifs/clbws:v0.1
     container_name: ws
@@ -146,3 +143,15 @@ services:
     environment:
       - COMMAND=normalizer
       - MAX_HEAP=2G
+
+  clb-admin:
+    image: gbifs/clbcli:v0.1
+    container_name: admin
+    depends_on:
+      - db
+      - solr
+      - rabbit
+      - elk
+    command: /bin/bash
+    environment:
+      - MAX_HEAP=256M

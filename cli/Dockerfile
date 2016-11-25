@@ -16,12 +16,13 @@ RUN apk add --update --no-cache tini bash curl
 
 RUN mkdir -p $CLI_HOME && \
 	cd $CLI_HOME && \
-	mkdir -p bin config neo dwca
+	mkdir -p config neo dwca
 
 WORKDIR $CLI_HOME
 
-ADD datasets.txt .
-ADD bin bin
+ADD *.txt $CLI_HOME/
+ADD *.sh $CLI_HOME/
+ADD *.xml $CLI_HOME/
 ADD config config
 RUN curl -Ls -o checklistbank-cli.jar "http://repository.gbif.org/service/local/artifact/maven/redirect?g=org.gbif.checklistbank&a=checklistbank-cli&r=gbif&c=shaded&v=${CLB_VERSION}"
 
