@@ -146,13 +146,3 @@ services:
     environment:
       - COMMAND=normalizer
       - MAX_HEAP=2G
-
-  cli-admin:
-    image: gbifs/clbcli:v0.1
-    depends_on:
-      - db
-      - rabbit
-      - elk
-    environment:
-      - COMMAND=admin
-      - MAX_HEAP=256M
