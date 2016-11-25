@@ -33,8 +33,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       
   db:
+    image: gbifs/clbdb:v0.1
     container_name: db
-    image: postgres
     env_file: .env
 
 #  maven:
@@ -146,3 +146,13 @@ services:
     environment:
       - COMMAND=normalizer
       - MAX_HEAP=2G
+
+  cli-admin:
+    image: gbifs/clbcli:v0.1
+    depends_on:
+      - db
+      - rabbit
+      - elk
+    environment:
+      - COMMAND=admin
+      - MAX_HEAP=256M
