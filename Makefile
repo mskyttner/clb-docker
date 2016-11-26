@@ -56,6 +56,11 @@ connect-db:
 connect-cli:
 	docker-compose run clb-admin /bin/bash
 
+# make crawl key=a739f783-08c1-4d47-a8cc-2e9e6e874202
+crawl:
+	docker-compose run clb-admin ./admin.sh CRAWL --key $(key)
+
+
 
 test-clbws:
 	@xdg-open http://nub:9000
