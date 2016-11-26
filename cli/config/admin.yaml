@@ -4,7 +4,7 @@ messaging:
   username: guest
   password: guest
 registry:
-  wsUrl: /usr/local/clb/cli/datasets.txt
+  wsUrl: /usr/local/clb/data/datasets.txt
 clb:
   serverName: db
   databaseName: clb
@@ -15,5 +15,5 @@ clb:
   minimumIdle: 0
   idleTimeout: 60000
 neo:
-  neoRepository: /usr/local/clb/cli/neo
-archiveRepository: /usr/local/clb/cli/dwca
+  neoRepository: /usr/local/clb/data/neo
+archiveRepository: /usr/local/clb/data/dwca

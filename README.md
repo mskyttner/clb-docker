@@ -1,60 +1,66 @@
 # nub-docker
 [![AGPLv3 License](http://img.shields.io/badge/license-AGPLv3-blue.svg) ](https://github.com/mskyttner/nub-docker/blob/master/LICENSE)
 
-Dockerized build for GBIF taxonomy tools from here: [checklistbank](https://github.com/gbif/checklistbank)
+Dockerized build for GBIF taxonomy tools: [checklistbank](https://github.com/gbif/checklistbank)
 
 Note: This is Work In Progress - the Makefile will change (and other things) and everything may not work.
 
 # Usage
 
-The Makefile provides targets (VERBs), for example:
+The Makefile provides targets (VERBs), for example you can:
 
-	make init  # cache/dl files
-	make build  # build using maven
-	make up  # start services
-	make release # push image to Docker Hub	
+	make  # use to build and launch all services from scratch
+
+... or you can instead of `make all` launch granular actions step by step ...
+
+	make init  # cache/dl files locally
+	make build  # build docker images
+	make up  # start services (currently uses docker-compose)
+
+... or push a binary to a remote registry ...
+
+	make release # build and push images to Docker Hub
+
+... or debug various services ...
+
+	make connect-db  # get db shell
+	make connect-cli  # get shell in checklistbank cli container
+
+... or issue a crawl ...
+	
+	# use gbif.org to find a dataset, say Dyntaxa and you get src:
+	# http://www.gbif.org/dataset/de8934f4-a136-481c-a87a-b0b202b80a31
+	# then issue crawl command with this identifier
+
+	make crawl key=de8934f4-a136-481c-a87a-b0b202b80a31
+
 
 The docker-compose.yml file provides components (NOUNs), for example:
 
-	postgres
-	neo4j
-	zookeeper
-	solr
-	nginx reverse proxy
+	proxy (nginx reverse proxy, provides the only ports open to the "outside", used for ssl termination and routing http traffic)
+	dnsdock (for service discovery from the host machine, on the "inside" of the software defined network)
+	elk (for troubleshooting and looking at logs)
 
-To build and start services, for now do:
-	
-	git clone --depth=1 $REPOSLUG
-	cd nub-docker
-	make
+	solr (for search)
+	db (uses postgres)
+	web (nginx front-end to web services)
+	rabbit (message bus)
+	cli (checklistbank cli container)
 
-To start all services and inspect the logs of the checklistbank web service do:
+	... etc ...
+
+To start all services, test that they run and inspect the logs do:
 
 	make up
-	docker-compose logs -f clbws
-
-If it started, you should see something like this in the log:
-
-	clbws_1    | 13:37:03.699 [main] INFO org.eclipse.jetty.server.Server - Started @6965ms
-
-To then test the checklistbank web service and CLI use:
-
-	make test-clbws
-	make test-clbcli
+	make connect-db
+	make connect-cli
+	make test-web # launches ELK to show logs
 
 # ELK
+
 The [ELK stack](http://elk-docker.readthedocs.io/) is configured for central logging.
 The CLIs and webservice are logging through the logstash logback appender.
-You can access kibana to search for logs on port 5601, e.g. http://192.168.99.100:5601/
-
-# TODO
-
-- deploy build artifacts (.jar) or perhaps just provide a "cli" container that allows for automated workflows
-- add postgres dump and load functionality
-- add zookeeper? what is it needed for? see https://github.com/gbif/checklistbank/blob/master/docs/INDEXING.md#messaging-flow
-- config rabbitmq properly
-- load data from DarwinCare Archives using the cli?
-- automate subset extraction from http://dl.dropbox.com/u/523458/Dyntaxa/Archive.zip (dataset from 2012-March-08)
+You can access kibana to search for logs on port 5601, e.g. http://192.168.99.100:5601/ on Mac, or 
 
 # Ideas / Discussion
 
@@ -62,15 +68,9 @@ You can access kibana to search for logs on port 5601, e.g. http://192.168.99.10
 
 ## Low tech approach to maintain local taxonomy or "storage classification" checklist
 
-- Load data from text file in clb, could be versioned with git
+- Load data from text (.yaml?) file into clb, could be interim stored in redis
 - Build a ui to allow export in that format
 - Schedule daily(?) upload to checklistbank via text file generated from taxonomy ui
-
-# Known issues
-
-One test fails - seems to require some "rabbitmq" config that currently fails:
-
-- https://github.com/mskyttner/nub-docker/issues/1
 
 # Further Reading
 

@@ -1,157 +1,88 @@
 version: '2'
 
 services:
-
-  elk:
-    image: advantageous/elk:0.1
-    hostname: elk
-    container_name: elk
-    ports:
-      - "9200:9200"
-      - "5044:5044"
-      - "5000:5000"
-      - "5601:5601"
-      - "5001/udp:5001"
-    command: /usr/local/bin/start.sh
       
-#  proxy:
-#    image: jwilder/nginx-proxy
-#    container_name: nginx-proxy
-#    ports:
-#      - "80:80"
-#      - "443:443"
-#    volumes:
-#      - /var/run/docker.sock:/tmp/docker.sock:ro
+  proxy:
+    # this receives outside http/https traffic and
+    # routes it to services in the SDN, it also
+    # sets up SSL and offer the only open ports to
+    # the outside - 80 and 443, we configure it
+    # with a dnddock alias to allow testing it easily from the
+    # host machine running these docker services
+    image: jwilder/nginx-proxy
+    environment:
+      - DNSDOCK_ALIAS=nub.docker
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
 
   dnsdock:
-#    image: tonistiigi/dnsdock:amd64-1.13.1
+    # for this to work, the host machine needs /etc/resolvconf configs
+    # see instructions at https://github.com/mskyttner/dns-test-docker
+    # the aacebedo image is an update of tonistiigi/dnsdock:amd64-1.13.1
+    # which has Dockerfile and docs available at Docker Hub
+    # (note the static ip on the docker bridge)
     image: aacebedo/dnsdock:v1.15.0-amd64
-    container_name: dnsdock
     ports:
       - 172.17.0.1:53:53/udp
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+
+  elk:
+    image: advantageous/elk:0.1
+    command: /usr/local/bin/start.sh
       
   db:
-    image: gbifs/clbdb:v0.1
+    image: gbifs/clbdb:v2.47-SNAPSHOT
     container_name: db
     env_file: .env
-
-#  maven:
-#    image: maven:3.3.9-jdk-8
-#    volumes:
-#      - ./checklistbank:/usr/src/mymaven
-#      - ./settings.xml:/root/.m2/settings.xml
-#      - ./repository:/root/.m2/repository
 
   rabbit:
     image: rabbitmq
     env_file: .env
     hostname: rabbit
-    container_name: rabbit
-    ports:
-      - 15672
 
   solr:
     image: solr
     env_file: .env
     hostname: solr
-    container_name: solr
-    ports:
-      - 8983
 
-  ws:
-    image: gbifs/clbws:v0.1
-    container_name: ws
+  web:
+    # this is "routing" all web traffic and knows
+    # all other services in the SDN by their 
+    # docker-compose names which are used in the app.conf file
+    image: nginx:alpine
+    environment: 
+      - VIRTUAL_HOST=nub.docker
+    volumes:
+      - ./app.conf:/etc/nginx/conf.d/app.conf
+
+  clbws:
+    image: gbifs/clbws:v2.47-SNAPSHOT
     hostname: ws
-    environment:
-      - VIRTUAL_HOST=ws
-      - DNSDOCK_ALIAS=ws
     depends_on:
       - db
       - solr
       - elk
-    ports:
-      - 9000
-      - 9001
-      
-#  nub-ws:
-#    image: gbifs/nubws:v0.1
-#    container_name: nubws
-#    hostname: nubws
-#    environment:
-#      - VIRTUAL_HOST=nubws
-#      - DNSDOCK_ALIAS=nubws
-#    depends_on:
-#      - db
-#      - elk
-#    ports:
-#      - 9002
-#      - 9003
 
-  clb-analyzer:
-    image: gbifs/clbcli:v0.1
+  nubws:
+    image: gbifs/nubws:v2.47-SNAPSHOT
+    hostname: nubws
+    depends_on:
+      - db
+      - solr
+      - elk
+
+  cli:
+    image: gbifs/clbcli:v2.47-SNAPSHOT
+    env_file: .env
+    volumes:
+      - ./data:/usr/local/clb/data
     depends_on:
       - db
       - solr
       - rabbit
       - elk
-    environment:
-      - COMMAND=analysis
-      - MAX_HEAP=256M
 
-  clb-crawler:
-    image: gbifs/clbcli:v0.1
-    depends_on:
-      - db
-      - solr
-      - rabbit
-      - elk
-    environment:
-      - COMMAND=crawler
-      - MAX_HEAP=256M
-
-  clb-importer:
-    image: gbifs/clbcli:v0.1
-    depends_on:
-      - db
-      - solr
-      - rabbit
-      - elk
-    environment:
-      - COMMAND=importer
-      - MAX_HEAP=1G
-
-  clb-matcher:
-    image: gbifs/clbcli:v0.1
-    depends_on:
-      - db
-      - solr
-      - rabbit
-      - elk
-    environment:
-      - COMMAND=dataset-matcher
-      - MAX_HEAP=2G
-
-  clb-normalizer:
-    image: gbifs/clbcli:v0.1
-    depends_on:
-      - db
-      - solr
-      - rabbit
-      - elk
-    environment:
-      - COMMAND=normalizer
-      - MAX_HEAP=2G
-
-  clb-admin:
-    image: gbifs/clbcli:v0.1
-    container_name: admin
-    depends_on:
-      - db
-      - solr
-      - rabbit
-      - elk
-    command: /bin/bash
-    environment:
-      - MAX_HEAP=256M

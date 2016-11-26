@@ -5,7 +5,7 @@ messaging:
   username: guest
   password: guest
 neo:
-  neoRepository: /usr/local/clb/cli/neo
+  neoRepository: /usr/local/clb/data/neo
   mappedMemory: 4096
   cacheType: SOFT
 clb:
@@ -17,4 +17,4 @@ clb:
   connectionTimeout: 2000
   minimumIdle: 0
   idleTimeout: 60000
-archiveRepository: /usr/local/clb/cli/dwca
+archiveRepository: /usr/local/clb/data/dwca
