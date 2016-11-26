@@ -19,6 +19,15 @@ RUN curl -Ls -o checklistbank-ws.jar "http://repository.gbif.org/service/local/a
 
 ENTRYPOINT ["/sbin/tini", "--"]
 
+#CMD ./wait-for-it.sh db:5432 -- \
+#	./wait-for-it.sh rabbit:15672 -- \
+#	./wait-for-it.sh solr:8983 -- \
+#    java -jar checklistbank-ws.jar \
+#	-conf application.properties \
+#	-httpPort 9000 \
+#	-httpAdminPort 9001 \
+#	-stopSecret stop	
+
 CMD sleep 5 && \
     java -jar checklistbank-ws.jar -conf application.properties -httpPort 9000 -httpAdminPort 9001 -stopSecret stop
 
