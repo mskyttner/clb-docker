@@ -5,9 +5,8 @@ DOCKER_GROUP = gbifs
 CLBVERSION = 2.47-SNAPSHOT
 NAME = $(DOCKER_GROUP)/clb
 VERSION = $(TRAVIS_BUILD_ID)
+
 ME = $(USER)
-HOST = clb.local
-MVN := maven:3.3.9-jdk-8
 TS := $(shell date '+%Y_%m_%d_%H_%M')
 PWD := $(shell pwd)
 USR := $(shell id -u)
@@ -37,21 +36,22 @@ build-db:
 	@docker build -t $(DOCKER_GROUP)/clbdb:v$(CLBVERSION) db
 
 start-db:
-	@docker-compose up -d db
-	@sleep 5 && docker exec -it db \
-		psql -U $(POSTGRES_USER) template1 -c 'create extension if not exists hstore;'
+	@docker-compose up -d dnsdock db
+	@./wait-for-it.sh clbdb.docker:5432 -- && \
+		docker exec -it db psql -U $(POSTGRES_USER) \
+		template1 -c 'create extension if not exists hstore;'
 
 build-ws:
 	@echo "Building ws image..."
-	@docker build --no-cache -t $(DOCKER_GROUP)/clbws:v$(CLBVERSION) ws
+	@docker build -t $(DOCKER_GROUP)/clbws:v$(CLBVERSION) ws
 
 build-nub-ws:
 	@echo "Building nub-ws image..."
-	@docker build --no-cache -t $(DOCKER_GROUP)/nubws:v$(CLBVERSION) nub-ws
+	@docker build -t $(DOCKER_GROUP)/nubws:v$(CLBVERSION) nub-ws
 
 build-cli:
 	@echo "Building cli image..."
-	@docker build --no-cache -t $(DOCKER_GROUP)/clbcli:v$(CLBVERSION) cli
+	@docker build -t $(DOCKER_GROUP)/clbcli:v$(CLBVERSION) cli
 
 
 up:
@@ -68,18 +68,56 @@ connect-db:
 		psql -U $(POSTGRES_USER) -d $(POSTGRES_DB)
 
 connect-cli:
-	docker-compose run clb-admin /bin/bash
+	docker-compose run cli /bin/bash
 
 # make crawl key=a739f783-08c1-4d47-a8cc-2e9e6e874202
-crawl:
-	docker-compose run clb-admin ./admin.sh CRAWL --key $(key)
+clb-crawl:
+	docker-compose run --rm cli ./admin.sh CRAWL --key $(key)
 
-test-clbws:
-	@xdg-open http://nub:9000/species
+clb-analysis:
+	docker-compose run --rm \
+		-e COMMAND=analysis \
+		-e MAX_HEAP=256M \
+		cli 
 
-test-clbcli:
-	@docker-compose run clbcli bash
+clb-crawler:
+	docker-compose run --rm \
+		-e COMMAND=crawler \
+		-e MAX_HEAP=256M \
+		cli
 
+clb-importer:
+	docker-compose run --rm \
+		-e COMMAND=importer \
+		-e MAX_HEAP=1G \
+		cli
+ 
+clb-matcher:
+	docker-compose run --rm \
+		-e COMMAND=dataset-matcher \
+		-e MAX_HEAP=2G \
+		cli
+
+clb-normalizer:
+	docker-compose run --rm \
+		-e COMMAND=normalizer \
+		-e MAX_HEAP=2G \
+		cli
+
+clb-admin:
+	docker-compose run --rm \
+		-e MAX_HEAP=256M \
+		cli bash
+
+
+test-web:
+	@echo "This call uses dnsdock names - image-name.docker "
+	@echo "where image-name is last part of the image tag"
+	@echo "... we have these active services:"
+	@curl -s http://dnsdock.docker/services | json_pp
+	@xdg-open http://clbws.docker:9000/species &
+	@xdg-open http://nubws.docker:9002/ &
+	@xdg-open http://nub.docker &
 
 
 rm: stop
