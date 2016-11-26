@@ -14,7 +14,7 @@ GRP := $(shell id -g)
 
 CLB_URL$ = https://github.com/gbif/checklistbank
 
-all: build up
+all: init build up
 .PHONY: all
 
 init:
