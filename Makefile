@@ -27,28 +27,14 @@ init:
 	@test -d checklistbank || \
 		git clone --depth=1 $(CLB_URL) checklistbank
 
-	#@cp pom.xml checklistbank 
-
 start-db:
 	@docker-compose up -d db
-	@docker exec -it db \
-		psql -U $(POSTGRES_USER) template1 -c 'create extension hstore;'
+	@sleep 5 && docker exec -it db \
+		psql -U $(POSTGRES_USER) template1 -c 'create extension if not exists hstore;'
 
 connect-db:
 	docker exec -it db \
 		psql -U $(POSTGRES_USER) -d $(POSTGRES_DB)
-
-start-rabbit:
-	@docker-compose up -d rabbit
-	docker network connect --alias rabbit multi-host-network rabbit
-
-start-neo:
-	@docker-compose up -d neo
-	docker network connect --alias neo multi-host-network neo
-
-start-solr:
-	@docker-compose up -d solr
-	docker network connect --alias solr multi-host-network solr
 
 build: start-db build-clb build-images
 
@@ -77,7 +63,7 @@ up:
 	@docker-compose up -d
 
 test-clbws:
-	@xdg-open http://nub:9000
+	@xdg-open http://nub:9000/species
 
 test-clbcli:
 	@docker-compose run clbcli bash
