@@ -1,7 +1,4 @@
 poolSize: 1
-ganglia:
-  host: ganglia
-  port: 8649
 messaging:
   host: rabbit
   virtualHost: /

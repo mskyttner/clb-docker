@@ -16,20 +16,17 @@ RUN apk add --update --no-cache tini bash curl
 
 RUN mkdir -p $CLI_HOME && \
 	cd $CLI_HOME && \
-	mkdir -p bin config neo dwca
+	mkdir -p config neo dwca
 
 WORKDIR $CLI_HOME
 
-ADD datasets.txt .
-ADD bin bin
+ADD *.txt $CLI_HOME/
+ADD *.sh $CLI_HOME/
+ADD *.xml $CLI_HOME/
 ADD config config
 RUN curl -Ls -o checklistbank-cli.jar "http://repository.gbif.org/service/local/artifact/maven/redirect?g=org.gbif.checklistbank&a=checklistbank-cli&r=gbif&c=shaded&v=${CLB_VERSION}"
-
-RUN curl -Ls -o wait-for-it.sh "https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh" && \
-    chmod +x wait-for-it.sh
-
 
 ENTRYPOINT ["/sbin/tini", "--"]
 # simple sleep to wait for PSQL and Rabbit server to start
 CMD sleep 6 && \
-    java -Xmx${MAX_HEAP} -jar $CLI_HOME/checklistbank-cli.jar $COMMAND --log-config $CLI_HOME/config/logback-${COMMAND}.xml --conf $CLI_HOME/config/${COMMAND}.yaml
+    java -Xmx${MAX_HEAP} -jar $CLI_HOME/checklistbank-cli.jar $COMMAND --log-config $CLI_HOME/logback.xml --conf $CLI_HOME/config/${COMMAND}.yaml
