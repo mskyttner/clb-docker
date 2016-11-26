@@ -1,10 +1,10 @@
 FROM java:8-jre-alpine
 
 ENV JAVA_OPTIONS="-Xmx1g"
-ENV CLB_VERSION=2.47-SNAPSHOT
+ENV CLBVERSION=2.47-SNAPSHOT
 
 MAINTAINER mdoering@gbif.org
-LABEL org.gbif.checklistbank.version="$CLB_VERSION"
+LABEL org.gbif.checklistbank.version="$CLBVERSION"
 LABEL vendor="GBIF"
 LABEL version="0.1"
 
@@ -15,7 +15,7 @@ WORKDIR /usr/local/clb/nub-ws
 ADD application.properties .
 ADD conf .
 
-RUN curl -Ls -o checklistbank-nub-ws.jar "http://repository.gbif.org/service/local/artifact/maven/redirect?g=org.gbif.checklistbank&a=checklistbank-nub-ws&r=gbif&v=${CLB_VERSION}"
+RUN curl -Ls -o checklistbank-nub-ws.jar "http://repository.gbif.org/service/local/artifact/maven/redirect?g=org.gbif.checklistbank&a=checklistbank-nub-ws&r=gbif&v=${CLBVERSION}"
 
 ENTRYPOINT ["/sbin/tini", "--"]
 

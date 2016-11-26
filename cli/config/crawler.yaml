@@ -5,6 +5,6 @@ messaging:
   username: guest
   password: guest
 registry:
-  wsUrl: /usr/local/clb/cli/datasets.txt
-archiveRepository: /usr/local/clb/cli/dwca
+  wsUrl: /usr/local/clb/data/datasets.txt
+archiveRepository: /usr/local/clb/data/dwca
 

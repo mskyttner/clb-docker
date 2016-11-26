@@ -37,13 +37,6 @@ services:
     container_name: db
     env_file: .env
 
-#  maven:
-#    image: maven:3.3.9-jdk-8
-#    volumes:
-#      - ./checklistbank:/usr/src/mymaven
-#      - ./settings.xml:/root/.m2/settings.xml
-#      - ./repository:/root/.m2/repository
-
   rabbit:
     image: rabbitmq
     env_file: .env
@@ -91,6 +84,7 @@ services:
 
   clb-analyzer:
     image: gbifs/clbcli:v0.1
+    env_file: .env
     depends_on:
       - db
       - solr
@@ -99,9 +93,12 @@ services:
     environment:
       - COMMAND=analysis
       - MAX_HEAP=256M
+    volumes_from:
+      - clb-crawler
 
   clb-crawler:
     image: gbifs/clbcli:v0.1
+    env_file: .env
     depends_on:
       - db
       - solr
@@ -110,9 +107,12 @@ services:
     environment:
       - COMMAND=crawler
       - MAX_HEAP=256M
+    volumes:
+      - /usr/local/clb/data
 
   clb-importer:
     image: gbifs/clbcli:v0.1
+    env_file: .env
     depends_on:
       - db
       - solr
@@ -121,9 +121,12 @@ services:
     environment:
       - COMMAND=importer
       - MAX_HEAP=1G
+    volumes_from:
+      - clb-crawler
 
   clb-matcher:
     image: gbifs/clbcli:v0.1
+    env_file: .env
     depends_on:
       - db
       - solr
@@ -132,9 +135,12 @@ services:
     environment:
       - COMMAND=dataset-matcher
       - MAX_HEAP=2G
+    volumes_from:
+      - clb-crawler
 
   clb-normalizer:
     image: gbifs/clbcli:v0.1
+    env_file: .env
     depends_on:
       - db
       - solr
@@ -143,10 +149,12 @@ services:
     environment:
       - COMMAND=normalizer
       - MAX_HEAP=2G
+    volumes_from:
+      - clb-crawler
 
   clb-admin:
     image: gbifs/clbcli:v0.1
-    container_name: admin
+    env_file: .env
     depends_on:
       - db
       - solr
@@ -155,3 +163,5 @@ services:
     command: /bin/bash
     environment:
       - MAX_HEAP=256M
+    volumes_from:
+      - clb-crawler

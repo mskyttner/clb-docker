@@ -1,9 +1,10 @@
 FROM java:8-jre-alpine
 
-ENV CLB_VERSION 2.47-SNAPSHOT
+# to be configured
+#ENV CLBVERSION 2.47-SNAPSHOT
 
 MAINTAINER mdoering@gbif.org
-LABEL org.gbif.checklistbank.version="$CLB_VERSION"
+LABEL org.gbif.checklistbank.version="$CLBVERSION"
 LABEL vendor="GBIF"
 LABEL version="0.1"
 
@@ -18,13 +19,13 @@ RUN mkdir -p $CLI_HOME && \
 	cd $CLI_HOME && \
 	mkdir -p config neo dwca
 
-WORKDIR $CLI_HOME
+ADD datasets.txt /usr/local/clb/data/
 
-ADD *.txt $CLI_HOME/
+WORKDIR $CLI_HOME
 ADD *.sh $CLI_HOME/
 ADD *.xml $CLI_HOME/
 ADD config config
-RUN curl -Ls -o checklistbank-cli.jar "http://repository.gbif.org/service/local/artifact/maven/redirect?g=org.gbif.checklistbank&a=checklistbank-cli&r=gbif&c=shaded&v=${CLB_VERSION}"
+ADD http://repository.gbif.org/service/local/artifact/maven/redirect?g=org.gbif.checklistbank&a=checklistbank-cli&r=gbif&c=shaded&v=${CLBVERSION} checklistbank-cli.jar
 
 ENTRYPOINT ["/sbin/tini", "--"]
 # simple sleep to wait for PSQL and Rabbit server to start
