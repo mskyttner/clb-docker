@@ -1,12 +1,12 @@
 FROM java:8-jre-alpine
 
 ENV JAVA_OPTIONS="-Xmx512m"
-ENV CLB_VERSION=2.47-SNAPSHOT
+ENV CLBVERSION=2.47-SNAPSHOT
 
 MAINTAINER mdoering@gbif.org
-LABEL org.gbif.checklistbank.version="$CLB_VERSION"
+LABEL org.gbif.checklistbank.version="${CLBVERSION}"
 LABEL vendor="GBIF"
-LABEL version="0.1"
+LABEL version="${CLBVERSION}"
 
 RUN apk add --update --no-cache tini curl
 
@@ -15,7 +15,7 @@ WORKDIR /usr/local/clb/ws
 ADD application.properties .
 ADD conf .
 
-RUN curl -Ls -o checklistbank-ws.jar "http://repository.gbif.org/service/local/artifact/maven/redirect?g=org.gbif.checklistbank&a=checklistbank-ws&r=gbif&v=${CLB_VERSION}"
+RUN curl -Ls -o checklistbank-ws.jar "http://repository.gbif.org/service/local/artifact/maven/redirect?g=org.gbif.checklistbank&a=checklistbank-ws&r=gbif&v=${CLBVERSION}"
 
 ENTRYPOINT ["/sbin/tini", "--"]
 
