@@ -1,14 +1,14 @@
 FROM java:8-jre-alpine
 
 ENV JAVA_OPTIONS="-Xmx1g"
-ENV CLBVERSION=2.47-SNAPSHOT
+ENV CLBVERSION=
 
 MAINTAINER mdoering@gbif.org
 LABEL org.gbif.checklistbank.version="${CLBVERSION}"
 LABEL vendor="GBIF"
 LABEL version="${CLBVERSION}"
 
-RUN apk add --update --no-cache tini curl
+RUN apk add --update --no-cache tini bash curl
 
 RUN mkdir -p /usr/local/clb/nub-ws/conf && cd /usr/local/clb/nub-ws
 WORKDIR /usr/local/clb/nub-ws

@@ -2,40 +2,35 @@
 include .env
 
 DOCKER_GROUP = gbifs
-CLBVERSION = 2.47-SNAPSHOT
 NAME = $(DOCKER_GROUP)/clb
 VERSION = $(TRAVIS_BUILD_ID)
-ME = $(USER)
-HOST = clb.local
-MVN := maven:3.3.9-jdk-8
-TS := $(shell date '+%Y_%m_%d_%H_%M')
-PWD := $(shell pwd)
-USR := $(shell id -u)
-GRP := $(shell id -g)
 
-CLB_URL$ = https://github.com/gbif/checklistbank
 
 all: build up
 .PHONY: all
 
 
-build: build-db build-ws build-nub-ws build-cli
+build: build-db build-solr build-ws build-nub-ws build-cli
 
 build-db:
 	@echo "Building db image..."
-	@docker build -t $(DOCKER_GROUP)/clbdb:v$(CLBVERSION) db
+	@docker build -t $(DOCKER_GROUP)/clbdb:$(CLBVERSION) db
+
+build-solr:
+	@echo "Building solr image..."
+	@docker build -t $(DOCKER_GROUP)/clbsolr:$(CLBVERSION) solr
 
 build-ws:
 	@echo "Building ws image..."
-	@docker build --no-cache -t $(DOCKER_GROUP)/clbws:v$(CLBVERSION) ws
+	@docker build --no-cache -t $(DOCKER_GROUP)/clbws:$(CLBVERSION) ws
 
 build-nub-ws:
 	@echo "Building nub-ws image..."
-	@docker build --no-cache -t $(DOCKER_GROUP)/nubws:v$(CLBVERSION) nub-ws
+	@docker build --no-cache -t $(DOCKER_GROUP)/nubws:$(CLBVERSION) nub-ws
 
 build-cli:
 	@echo "Building cli image..."
-	@docker build --no-cache -t $(DOCKER_GROUP)/clbcli:v$(CLBVERSION) cli
+	@docker build --no-cache -t $(DOCKER_GROUP)/clbcli:$(CLBVERSION) cli
 
 
 
@@ -76,7 +71,7 @@ rm: stop
 	#sudo rm -rf mysql-datadir cassandra-datadir initdb lucene-datadir
 
 push:
-	@docker push $(DOCKER_GROUP)/clbws:v$(CLBVERSION)
-	@docker push $(DOCKER_GROUP)/clbcli:v$(CLBVERSION)
+	@docker push $(DOCKER_GROUP)/clbws:$(CLBVERSION)
+	@docker push $(DOCKER_GROUP)/clbcli:$(CLBVERSION)
 
 release: build push

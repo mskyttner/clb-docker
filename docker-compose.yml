@@ -9,11 +9,11 @@ services:
     hostname: elk
     container_name: elk
     ports:
-      - "9200:9200"
-      - "5044:5044"
-      - "5000:5000"
-      - "5601:5601"
+      - 9200
+      - 5044
+      - 5000
       - "5001/udp:5001"
+      - "5601:5601"
     command: /usr/local/bin/start.sh
       
 #  proxy:
@@ -36,7 +36,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       
   db:
-    image: gbifs/clbdb:v2.47-SNAPSHOT
+    image: gbifs/clbdb:2.47-SNAPSHOT
     container_name: db
     env_file: .env
 
@@ -49,30 +49,48 @@ services:
       - "15672:15672"
 
   solr:
-    image: solr
+    image: gbifs/clbsolr:2.47-SNAPSHOT
     env_file: .env
     hostname: solr
     container_name: solr
     ports:
-      - 8983
+      - "8983:8983"
+    environment:
+      - VERBOSE=yes
+
+  varnish:
+    image: million12/varnish
+    env_file: .env
+    hostname: varnish
+    container_name: varnish
+    ports:
+      - "80:80"
+    volumes_from:
+      - ws
+    environment:
+      - VCL_CONFIG=/etc/clb/default.vcl
+    depends_on:
+      - ws
 
   ws:
-    image: gbifs/clbws:v2.47-SNAPSHOT
+    image: gbifs/clbws:2.47-SNAPSHOT
     container_name: ws
     hostname: ws
     environment:
       - VIRTUAL_HOST=ws
       - DNSDOCK_ALIAS=ws
+    volumes:
+      - /etc/clb
     depends_on:
       - db
       - solr
       - elk
     ports:
-      - 9000
+      - "9000:9000"
       - 9001
       
 #  nub-ws:
-#    image: gbifs/nubws:v2.47-SNAPSHOT
+#    image: gbifs/nubws:2.47-SNAPSHOT
 #    container_name: nubws
 #    hostname: nubws
 #    environment:
@@ -86,7 +104,7 @@ services:
 #      - 9003
 
   clb-analyzer:
-    image: gbifs/clbcli:v2.47-SNAPSHOT
+    image: gbifs/clbcli:2.47-SNAPSHOT
     env_file: .env
     depends_on:
       - db
@@ -100,7 +118,7 @@ services:
       - clb-crawler
 
   clb-crawler:
-    image: gbifs/clbcli:v2.47-SNAPSHOT
+    image: gbifs/clbcli:2.47-SNAPSHOT
     env_file: .env
     depends_on:
       - db
@@ -114,7 +132,7 @@ services:
       - /usr/local/clb/data
 
   clb-importer:
-    image: gbifs/clbcli:v2.47-SNAPSHOT
+    image: gbifs/clbcli:2.47-SNAPSHOT
     env_file: .env
     depends_on:
       - db
@@ -128,7 +146,7 @@ services:
       - clb-crawler
 
   clb-matcher:
-    image: gbifs/clbcli:v2.47-SNAPSHOT
+    image: gbifs/clbcli:2.47-SNAPSHOT
     env_file: .env
     depends_on:
       - db
@@ -142,7 +160,7 @@ services:
       - clb-crawler
 
   clb-normalizer:
-    image: gbifs/clbcli:v2.47-SNAPSHOT
+    image: gbifs/clbcli:2.47-SNAPSHOT
     env_file: .env
     depends_on:
       - db
@@ -156,7 +174,7 @@ services:
       - clb-crawler
 
   clb-admin:
-    image: gbifs/clbcli:v2.47-SNAPSHOT
+    image: gbifs/clbcli:2.47-SNAPSHOT
     env_file: .env
     depends_on:
       - db
