@@ -1,5 +1,7 @@
 version: '2'
 
+#TODO: how to best set CLBVERSION in this file???
+
 services:
 
   elk:
@@ -28,12 +30,13 @@ services:
     image: aacebedo/dnsdock:v1.15.0-amd64
     container_name: dnsdock
     ports:
+        # TODO: what is the IP ????
       - 172.17.0.1:53:53/udp
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       
   db:
-    image: gbifs/clbdb:v0.1
+    image: gbifs/clbdb:v2.47-SNAPSHOT
     container_name: db
     env_file: .env
 
@@ -43,7 +46,7 @@ services:
     hostname: rabbit
     container_name: rabbit
     ports:
-      - 15672
+      - "15672:15672"
 
   solr:
     image: solr
@@ -54,7 +57,7 @@ services:
       - 8983
 
   ws:
-    image: gbifs/clbws:v0.1
+    image: gbifs/clbws:v2.47-SNAPSHOT
     container_name: ws
     hostname: ws
     environment:
@@ -69,7 +72,7 @@ services:
       - 9001
       
 #  nub-ws:
-#    image: gbifs/nubws:v0.1
+#    image: gbifs/nubws:v2.47-SNAPSHOT
 #    container_name: nubws
 #    hostname: nubws
 #    environment:
@@ -83,7 +86,7 @@ services:
 #      - 9003
 
   clb-analyzer:
-    image: gbifs/clbcli:v0.1
+    image: gbifs/clbcli:v2.47-SNAPSHOT
     env_file: .env
     depends_on:
       - db
@@ -97,7 +100,7 @@ services:
       - clb-crawler
 
   clb-crawler:
-    image: gbifs/clbcli:v0.1
+    image: gbifs/clbcli:v2.47-SNAPSHOT
     env_file: .env
     depends_on:
       - db
@@ -111,7 +114,7 @@ services:
       - /usr/local/clb/data
 
   clb-importer:
-    image: gbifs/clbcli:v0.1
+    image: gbifs/clbcli:v2.47-SNAPSHOT
     env_file: .env
     depends_on:
       - db
@@ -125,7 +128,7 @@ services:
       - clb-crawler
 
   clb-matcher:
-    image: gbifs/clbcli:v0.1
+    image: gbifs/clbcli:v2.47-SNAPSHOT
     env_file: .env
     depends_on:
       - db
@@ -139,7 +142,7 @@ services:
       - clb-crawler
 
   clb-normalizer:
-    image: gbifs/clbcli:v0.1
+    image: gbifs/clbcli:v2.47-SNAPSHOT
     env_file: .env
     depends_on:
       - db
@@ -153,7 +156,7 @@ services:
       - clb-crawler
 
   clb-admin:
-    image: gbifs/clbcli:v0.1
+    image: gbifs/clbcli:v2.47-SNAPSHOT
     env_file: .env
     depends_on:
       - db

@@ -2,7 +2,7 @@
 include .env
 
 DOCKER_GROUP = gbifs
-DOCKER_VERSION = v0.1
+CLBVERSION = 2.47-SNAPSHOT
 NAME = $(DOCKER_GROUP)/clb
 VERSION = $(TRAVIS_BUILD_ID)
 ME = $(USER)
@@ -23,19 +23,19 @@ build: build-db build-ws build-nub-ws build-cli
 
 build-db:
 	@echo "Building db image..."
-	@docker build -t $(DOCKER_GROUP)/clbdb:$(DOCKER_VERSION) db
+	@docker build -t $(DOCKER_GROUP)/clbdb:v$(CLBVERSION) db
 
 build-ws:
 	@echo "Building ws image..."
-	@docker build --no-cache -t $(DOCKER_GROUP)/clbws:$(DOCKER_VERSION) ws
+	@docker build --no-cache -t $(DOCKER_GROUP)/clbws:v$(CLBVERSION) ws
 
 build-nub-ws:
 	@echo "Building nub-ws image..."
-	@docker build --no-cache -t $(DOCKER_GROUP)/nubws:$(DOCKER_VERSION) nub-ws
+	@docker build --no-cache -t $(DOCKER_GROUP)/nubws:v$(CLBVERSION) nub-ws
 
 build-cli:
 	@echo "Building cli image..."
-	@docker build --no-cache -t $(DOCKER_GROUP)/clbcli:$(DOCKER_VERSION) cli
+	@docker build --no-cache -t $(DOCKER_GROUP)/clbcli:v$(CLBVERSION) cli
 
 
 
@@ -76,7 +76,7 @@ rm: stop
 	#sudo rm -rf mysql-datadir cassandra-datadir initdb lucene-datadir
 
 push:
-	@docker push $(DOCKER_GROUP)/clbws:$(DOCKER_VERSION)
-	@docker push $(DOCKER_GROUP)/clbcli:$(DOCKER_VERSION)
+	@docker push $(DOCKER_GROUP)/clbws:v$(CLBVERSION)
+	@docker push $(DOCKER_GROUP)/clbcli:v$(CLBVERSION)
 
 release: build push

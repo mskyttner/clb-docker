@@ -1,12 +1,12 @@
 FROM java:8-jre-alpine
 
-# to be configured
-#ENV CLBVERSION 2.47-SNAPSHOT
+# CLBVERSION to be configured outside
+ENV CLBVERSION 2.47-SNAPSHOT
 
 MAINTAINER mdoering@gbif.org
-LABEL org.gbif.checklistbank.version="$CLBVERSION"
+LABEL org.gbif.checklistbank.version="${CLBVERSION}"
 LABEL vendor="GBIF"
-LABEL version="0.1"
+LABEL version="${CLBVERSION}"
 
 ENV COMMAND analysis
 ENV MAX_HEAP 256M
@@ -25,7 +25,9 @@ WORKDIR $CLI_HOME
 ADD *.sh $CLI_HOME/
 ADD *.xml $CLI_HOME/
 ADD config config
-ADD http://repository.gbif.org/service/local/artifact/maven/redirect?g=org.gbif.checklistbank&a=checklistbank-cli&r=gbif&c=shaded&v=${CLBVERSION} checklistbank-cli.jar
+
+# ADD not working with redirects. Use curl instead
+RUN curl -Ls -o checklistbank-cli.jar "http://repository.gbif.org/service/local/artifact/maven/redirect?g=org.gbif.checklistbank&a=checklistbank-cli&r=gbif&c=shaded&v=${CLBVERSION}"
 
 ENTRYPOINT ["/sbin/tini", "--"]
 # simple sleep to wait for PSQL and Rabbit server to start

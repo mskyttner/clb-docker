@@ -4,9 +4,9 @@ ENV JAVA_OPTIONS="-Xmx1g"
 ENV CLBVERSION=2.47-SNAPSHOT
 
 MAINTAINER mdoering@gbif.org
-LABEL org.gbif.checklistbank.version="$CLBVERSION"
+LABEL org.gbif.checklistbank.version="${CLBVERSION}"
 LABEL vendor="GBIF"
-LABEL version="0.1"
+LABEL version="${CLBVERSION}"
 
 RUN apk add --update --no-cache tini curl
 
