@@ -1,0 +1,19 @@
+poolSize: 1
+messaging:
+  host: rabbit
+  virtualHost: /
+  username: guest
+  password: guest
+clb:
+  serverName: db
+  databaseName: clb
+  user: postgres
+  password: passw0rd12
+  maximumPoolSize: 6
+  connectionTimeout: 2000
+  minimumIdle: 0
+  idleTimeout: 60000
+solr:
+  serverType: HTTP
+  serverHome: 
+  collection: clb

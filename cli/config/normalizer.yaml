@@ -1,0 +1,20 @@
+poolSize: 1
+messaging:
+  host: rabbit
+  virtualHost: /
+  username: guest
+  password: guest
+neo:
+  neoRepository: /usr/local/clb/cli/neo
+  mappedMemory: 4096
+  cacheType: SOFT
+clb:
+  serverName: db
+  databaseName: clb
+  user: postgres
+  password: passw0rd12
+  maximumPoolSize: 2
+  connectionTimeout: 2000
+  minimumIdle: 0
+  idleTimeout: 60000
+archiveRepository: /usr/local/clb/cli/dwca

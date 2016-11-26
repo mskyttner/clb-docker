@@ -1,0 +1,19 @@
+messaging:
+  host: rabbit
+  virtualHost: /
+  username: guest
+  password: guest
+registry:
+  wsUrl: /usr/local/clb/cli/datasets.txt
+clb:
+  serverName: db
+  databaseName: clb
+  user: postgres
+  password: passw0rd12
+  maximumPoolSize: 4
+  connectionTimeout: 2000
+  minimumIdle: 0
+  idleTimeout: 60000
+neo:
+  neoRepository: /usr/local/clb/cli/neo
+archiveRepository: /usr/local/clb/cli/dwca

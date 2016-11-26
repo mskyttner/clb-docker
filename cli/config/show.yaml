@@ -1,0 +1,6 @@
+neo:
+  neoRepository: /usr/local/clb/cli/neo
+format: TEXT
+file: tree.txt
+fullNames: false
+

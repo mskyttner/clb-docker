@@ -1,0 +1,3 @@
+neo:
+  neoRepository: /usr/local/clb/cli/neo
+port: 1337

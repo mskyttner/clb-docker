@@ -1,0 +1,27 @@
+messaging:
+  host: rabbit
+  virtualHost: /
+  username: guest
+  password: guest
+neo:
+  neoRepository: /usr/local/clb/cli/neo
+  mappedMemory: 8192
+  batchSize: 10000
+clb:
+  serverName: db
+  databaseName: clb
+  user: postgres
+  password: passw0rd12
+  maximumPoolSize: 8
+  minimumIdle: 0
+  idleTimeout: 60000
+  connectionTimeout: 2000
+registry:
+  wsUrl: /usr/local/clb/cli/datasets.txt
+validate: true
+runAssertions: false
+groupBasionyms: true
+keepLonelyAutonyms: false
+keepEmptyImplicitNames: false
+autoImport: false
+reportDir: /usr/local/clb/cli/logs/nub

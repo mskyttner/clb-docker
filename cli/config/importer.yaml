@@ -1,0 +1,26 @@
+poolSize: 1
+solrSyncThreads: 1
+chunkSize: 20000
+chunkMinSize: 100
+messaging:
+  host: rabbit
+  virtualHost: /
+  username: guest
+  password: guest
+neo:
+  neoRepository: /usr/local/clb/cli/neo
+  mappedMemory: 2048
+clb:
+  serverName: db
+  databaseName: clb
+  user: postgres
+  password: passw0rd12
+  maximumPoolSize: 12
+  minimumIdle: 0
+  idleTimeout: 60000
+  connectionTimeout: 2000
+  syncThreads: 8
+solr:
+  serverType: HTTP
+  serverHome: http://solr:8983/solr
+  collection: clb

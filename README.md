@@ -42,6 +42,11 @@ To then test the checklistbank web service and CLI use:
 	make test-clbws
 	make test-clbcli
 
+# ELK
+The [ELK stack](http://elk-docker.readthedocs.io/) is configured for central logging.
+The CLIs and webservice are logging through the logstash logback appender.
+You can access kibana to search for logs on port 5601, e.g. http://192.168.99.100:5601/
+
 # TODO
 
 - deploy build artifacts (.jar) or perhaps just provide a "cli" container that allows for automated workflows

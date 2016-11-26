@@ -1,26 +1,32 @@
 FROM java:8-jre-alpine
 
-ENV JAVA_OPTIONS="-Xms256m -Xmx512m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=60"
+ENV CLB_VERSION 2.47-SNAPSHOT
 
-RUN apk add --update --no-cache tini bash
+MAINTAINER mdoering@gbif.org
+LABEL org.gbif.checklistbank.version="$CLB_VERSION"
+LABEL vendor="GBIF"
+LABEL version="0.1"
 
-# use a user called "crap" if possible
+ENV COMMAND analysis
+ENV MAX_HEAP 256M
+ENV JAVA_OPTIONS="-Xmx${MAX_HEAP} -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=60"
+ENV CLI_HOME /usr/local/clb/cli
 
-RUN mkdir -p /usr/src/myapp && \
-	cd /usr/src/myapp && \
-	mkdir -p bin lib logs neo storage/dwca
+RUN apk add --update --no-cache tini bash curl
 
-WORKDIR /usr/src/myapp
+RUN mkdir -p $CLI_HOME && \
+	cd $CLI_HOME && \
+	mkdir -p config neo dwca
 
-ADD config.sh .
-ADD bin bin
+WORKDIR $CLI_HOME
+
+ADD *.txt $CLI_HOME/
+ADD *.sh $CLI_HOME/
+ADD *.xml $CLI_HOME/
 ADD config config
-ADD lib lib
-ADD checklistbank-cli.jar lib
+RUN curl -Ls -o checklistbank-cli.jar "http://repository.gbif.org/service/local/artifact/maven/redirect?g=org.gbif.checklistbank&a=checklistbank-cli&r=gbif&c=shaded&v=${CLB_VERSION}"
 
-WORKDIR /usr/src/myapp/bin
 ENTRYPOINT ["/sbin/tini", "--"]
-CMD ./start-clb.sh
-
-
-
+# simple sleep to wait for PSQL and Rabbit server to start
+CMD sleep 6 && \
+    java -Xmx${MAX_HEAP} -jar $CLI_HOME/checklistbank-cli.jar $COMMAND --log-config $CLI_HOME/logback.xml --conf $CLI_HOME/config/${COMMAND}.yaml

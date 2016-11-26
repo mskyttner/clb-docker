@@ -2,75 +2,156 @@ version: '2'
 
 services:
 
-  proxy:
-    image: jwilder/nginx-proxy
-    container_name: nginx-proxy
+  elk:
+    image: advantageous/elk:0.1
+    hostname: elk
+    container_name: elk
     ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - "9200:9200"
+      - "5044:5044"
+      - "5000:5000"
+      - "5601:5601"
+      - "5001/udp:5001"
+    command: /usr/local/bin/start.sh
+      
+#  proxy:
+#    image: jwilder/nginx-proxy
+#    container_name: nginx-proxy
+#    ports:
+#      - "80:80"
+#      - "443:443"
+#    volumes:
+#      - /var/run/docker.sock:/tmp/docker.sock:ro
 
   dnsdock:
 #    image: tonistiigi/dnsdock:amd64-1.13.1
     image: aacebedo/dnsdock:v1.15.0-amd64
+    container_name: dnsdock
     ports:
       - 172.17.0.1:53:53/udp
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       
   db:
+    image: gbifs/clbdb:v0.1
     container_name: db
-    image: postgres
     env_file: .env
 
-  maven:
-    image: maven:3.3.9-jdk-8
-    volumes:
-      - ./checklistbank:/usr/src/mymaven
-      - ./settings.xml:/root/.m2/settings.xml
-      - ./repository:/root/.m2/repository
-
-  clbws:
-    image: dina/clbws:v0.1
-    environment:
-      - VIRTUAL_HOST=clbws
-      - DNSDOCK_ALIAS=clbws
-    depends_on:
-      - db
-    ports:
-      - 9000
-      - 9001
-
-  clbcli:
-    image: dina/clbcli:v0.1
-    depends_on:
-      - db
-
-  ws:
-    image: nginx
+#  maven:
+#    image: maven:3.3.9-jdk-8
+#    volumes:
+#      - ./checklistbank:/usr/src/mymaven
+#      - ./settings.xml:/root/.m2/settings.xml
+#      - ./repository:/root/.m2/repository
 
   rabbit:
     image: rabbitmq
     env_file: .env
     hostname: rabbit
     container_name: rabbit
-
-  neo:
-    image: neo4j
-    env_file: .env
-    hostname: neo
-    container_name: neo
+    ports:
+      - 15672
 
   solr:
     image: solr
     env_file: .env
     hostname: solr
     container_name: solr
+    ports:
+      - 8983
 
-  zoo:
-    image: zookeeper:3.4.9
-    env_file: .env
-    hostname: zoo
-    container_name: zoo
+  ws:
+    image: gbifs/clbws:v0.1
+    container_name: ws
+    hostname: ws
+    environment:
+      - VIRTUAL_HOST=ws
+      - DNSDOCK_ALIAS=ws
+    depends_on:
+      - db
+      - solr
+      - elk
+    ports:
+      - 9000
+      - 9001
+      
+#  nub-ws:
+#    image: gbifs/nubws:v0.1
+#    container_name: nubws
+#    hostname: nubws
+#    environment:
+#      - VIRTUAL_HOST=nubws
+#      - DNSDOCK_ALIAS=nubws
+#    depends_on:
+#      - db
+#      - elk
+#    ports:
+#      - 9002
+#      - 9003
 
+  clb-analyzer:
+    image: gbifs/clbcli:v0.1
+    depends_on:
+      - db
+      - solr
+      - rabbit
+      - elk
+    environment:
+      - COMMAND=analysis
+      - MAX_HEAP=256M
+
+  clb-crawler:
+    image: gbifs/clbcli:v0.1
+    depends_on:
+      - db
+      - solr
+      - rabbit
+      - elk
+    environment:
+      - COMMAND=crawler
+      - MAX_HEAP=256M
+
+  clb-importer:
+    image: gbifs/clbcli:v0.1
+    depends_on:
+      - db
+      - solr
+      - rabbit
+      - elk
+    environment:
+      - COMMAND=importer
+      - MAX_HEAP=1G
+
+  clb-matcher:
+    image: gbifs/clbcli:v0.1
+    depends_on:
+      - db
+      - solr
+      - rabbit
+      - elk
+    environment:
+      - COMMAND=dataset-matcher
+      - MAX_HEAP=2G
+
+  clb-normalizer:
+    image: gbifs/clbcli:v0.1
+    depends_on:
+      - db
+      - solr
+      - rabbit
+      - elk
+    environment:
+      - COMMAND=normalizer
+      - MAX_HEAP=2G
+
+  clb-admin:
+    image: gbifs/clbcli:v0.1
+    container_name: admin
+    depends_on:
+      - db
+      - solr
+      - rabbit
+      - elk
+    command: /bin/bash
+    environment:
+      - MAX_HEAP=256M
