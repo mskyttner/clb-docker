@@ -18,6 +18,17 @@ CLB_URL$ = https://github.com/gbif/checklistbank
 all: init build up
 .PHONY: all
 
+init:
+	@echo "Caching files required for the build..."
+
+	@test -f wait-for-it.sh || \
+		curl --progress -L -s -o wait-for-it.sh \
+			https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh && \
+			chmod +x wait-for-it.sh
+
+	@cp wait-for-it.sh nub-ws 
+	@cp wait-for-it.sh cli
+	@cp wait-for-it.sh ws
 
 build: build-db build-ws build-nub-ws build-cli
 
@@ -62,8 +73,6 @@ connect-cli:
 # make crawl key=a739f783-08c1-4d47-a8cc-2e9e6e874202
 crawl:
 	docker-compose run clb-admin ./admin.sh CRAWL --key $(key)
-
-
 
 test-clbws:
 	@xdg-open http://nub:9000/species
