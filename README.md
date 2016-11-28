@@ -50,9 +50,11 @@ To start a crawl for a dataset you can use make again. See [datasets.txt](cli/da
 	make crawl key=a739f783-08c1-4d47-a8cc-2e9e6e874202
 
 You can connect to postgres quickly using psql via make:
+
 	connect-db
 
 You can connect to the cli container and run clb shell scripts manually via:
+
 	connect-cli
 
 
