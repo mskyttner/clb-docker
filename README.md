@@ -9,7 +9,7 @@ Please follow https://docs.docker.com/machine/get-started/ to run a local VM usi
 
 If you have docker machine installed you can create or start the default virtualbox VM with at least 8g better 12g of memory:
 
-	docker-machine create --driver virtualbox --virtualbox-memory "8192" default
+	docker-machine create --driver virtualbox --virtualbox-memory "8192" --virtualbox-cpu-count 2 default
 	docker-machine start default
 
 The Makefile in this project provides simple targets for installation and usage.
