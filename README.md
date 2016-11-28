@@ -7,9 +7,9 @@ Note: This is Work In Progress - the Makefile will change (and other things) and
 The installation requires a running docker host. 
 Please follow https://docs.docker.com/machine/get-started/ to run a local VM using docker-machine (at the time of writing Docker for Mac was awefully slow and is not recommended!)
 
-If you have docker machine installed you can create or start the default virtualbox VM with:
+If you have docker machine installed you can create or start the default virtualbox VM with at least 8g better 12g of memory:
 
-	docker-machine create --driver virtualbox default
+	docker-machine create --driver virtualbox --virtualbox-memory "8192" default
 	docker-machine start default
 
 The Makefile in this project provides simple targets for installation and usage.

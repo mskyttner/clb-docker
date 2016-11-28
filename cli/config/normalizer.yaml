@@ -6,7 +6,7 @@ messaging:
   password: guest
 neo:
   neoRepository: /usr/local/clb/data/neo
-  mappedMemory: 4096
+  mappedMemory: 1024
   cacheType: SOFT
 clb:
   serverName: db

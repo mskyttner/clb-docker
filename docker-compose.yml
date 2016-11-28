@@ -139,7 +139,7 @@ services:
       - elk
     environment:
       - COMMAND=normalizer
-      - MAX_HEAP=4G
+      - MAX_HEAP=3G
     volumes_from:
       - clb-crawler
 
