@@ -111,7 +111,7 @@ services:
       - elk
     environment:
       - COMMAND=importer
-      - MAX_HEAP=1G
+      - MAX_HEAP=2G
     volumes_from:
       - clb-crawler
 
@@ -125,7 +125,7 @@ services:
       - elk
     environment:
       - COMMAND=dataset-matcher
-      - MAX_HEAP=2G
+      - MAX_HEAP=1G
     volumes_from:
       - clb-crawler
 
@@ -139,7 +139,7 @@ services:
       - elk
     environment:
       - COMMAND=normalizer
-      - MAX_HEAP=2G
+      - MAX_HEAP=4G
     volumes_from:
       - clb-crawler
 
