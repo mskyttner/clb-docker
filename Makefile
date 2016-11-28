@@ -12,6 +12,7 @@ all: build up
 
 build: build-db build-solr build-ws build-nub-ws build-cli
 
+# use --no-cache if rebuilding newer snapshots !!!
 build-db:
 	@echo "Building db image..."
 	@docker build -t $(DOCKER_GROUP)/clbdb:$(CLBVERSION) db
@@ -22,15 +23,15 @@ build-solr:
 
 build-ws:
 	@echo "Building ws image..."
-	@docker build --no-cache -t $(DOCKER_GROUP)/clbws:$(CLBVERSION) ws
+	@docker build -t $(DOCKER_GROUP)/clbws:$(CLBVERSION) ws
 
 build-nub-ws:
 	@echo "Building nub-ws image..."
-	@docker build --no-cache -t $(DOCKER_GROUP)/nubws:$(CLBVERSION) nub-ws
+	@docker build -t $(DOCKER_GROUP)/nubws:$(CLBVERSION) nub-ws
 
 build-cli:
 	@echo "Building cli image..."
-	@docker build --no-cache -t $(DOCKER_GROUP)/clbcli:$(CLBVERSION) cli
+	@docker build -t $(DOCKER_GROUP)/clbcli:$(CLBVERSION) cli
 
 
 

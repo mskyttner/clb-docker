@@ -1,7 +1,5 @@
 version: '2'
 
-#TODO: how to best set CLBVERSION in this file???
-
 services:
 
   elk:
@@ -9,39 +7,18 @@ services:
     hostname: elk
     container_name: elk
     ports:
-      - 9200
-      - 5044
-      - 5000
-      - "5001/udp:5001"
       - "5601:5601"
     command: /usr/local/bin/start.sh
-      
-#  proxy:
-#    image: jwilder/nginx-proxy
-#    container_name: nginx-proxy
-#    ports:
-#      - "80:80"
-#      - "443:443"
-#    volumes:
-#      - /var/run/docker.sock:/tmp/docker.sock:ro
 
-  dnsdock:
-#    image: tonistiigi/dnsdock:amd64-1.13.1
-    image: aacebedo/dnsdock:v1.15.0-amd64
-    container_name: dnsdock
-    ports:
-        # TODO: what is the IP ????
-      - 172.17.0.1:53:53/udp
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      
   db:
     image: gbifs/clbdb:2.47-SNAPSHOT
     container_name: db
     env_file: .env
+    ports:
+      - "5432:5432"
 
   rabbit:
-    image: rabbitmq
+    image: rabbitmq:3.6-management
     env_file: .env
     hostname: rabbit
     container_name: rabbit
@@ -63,12 +40,12 @@ services:
     env_file: .env
     hostname: varnish
     container_name: varnish
+    environment:
+      - VCL_CONFIG=/etc/clb/default.vcl
     ports:
       - "80:80"
     volumes_from:
       - ws
-    environment:
-      - VCL_CONFIG=/etc/clb/default.vcl
     depends_on:
       - ws
 
@@ -76,9 +53,6 @@ services:
     image: gbifs/clbws:2.47-SNAPSHOT
     container_name: ws
     hostname: ws
-    environment:
-      - VIRTUAL_HOST=ws
-      - DNSDOCK_ALIAS=ws
     volumes:
       - /etc/clb
     depends_on:
@@ -87,15 +61,11 @@ services:
       - elk
     ports:
       - "9000:9000"
-      - 9001
       
 #  nub-ws:
 #    image: gbifs/nubws:2.47-SNAPSHOT
 #    container_name: nubws
 #    hostname: nubws
-#    environment:
-#      - VIRTUAL_HOST=nubws
-#      - DNSDOCK_ALIAS=nubws
 #    depends_on:
 #      - db
 #      - elk

@@ -1,6 +1,4 @@
-# nub-docker
-[![AGPLv3 License](http://img.shields.io/badge/license-AGPLv3-blue.svg) ](https://github.com/mskyttner/nub-docker/blob/master/LICENSE)
-
+# clb-docker
 Dockerized build for GBIF taxonomy tools from here: [checklistbank](https://github.com/gbif/checklistbank)
 
 Note: This is Work In Progress - the Makefile will change (and other things) and everything may not work.
@@ -9,23 +7,14 @@ Note: This is Work In Progress - the Makefile will change (and other things) and
 
 The Makefile provides targets (VERBs), for example:
 
-	make init  # cache/dl files
-	make build  # build using maven
+	make build  # build docker images
 	make up  # start services
-	make release # push image to Docker Hub	
-
-The docker-compose.yml file provides components (NOUNs), for example:
-
-	postgres
-	neo4j
-	zookeeper
-	solr
-	nginx reverse proxy
+	make release # push images to Docker Hub	
 
 To build and start services, for now do:
 	
 	git clone --depth=1 $REPOSLUG
-	cd nub-docker
+	cd clb-docker
 	make
 
 To start all services and inspect the logs of the checklistbank web service do:
@@ -37,40 +26,35 @@ If it started, you should see something like this in the log:
 
 	clbws_1    | 13:37:03.699 [main] INFO org.eclipse.jetty.server.Server - Started @6965ms
 
-To then test the checklistbank web service and CLI use:
 
-	make test-clbws
-	make test-clbcli
+## Make admin targets
+To start a crawl for a dataset you can use make again. See [datasets.txt](cli/datasets.txt) for all registered datasets
 
-# ELK
-The [ELK stack](http://elk-docker.readthedocs.io/) is configured for central logging.
-The CLIs and webservice are logging through the logstash logback appender.
-You can access kibana to search for logs on port 5601, e.g. http://192.168.99.100:5601/
+	make crawl key=a739f783-08c1-4d47-a8cc-2e9e6e874202
 
+You can connect to postgres quickly using psql via make:
+	connect-db
+
+You can connect to the cli container and run clb shell scripts manually via:
+	connect-cli
+
+
+# Exposed services
+The host machine exposes the following ports to the outside world:
+
+ - MACHINE_IP:80 [CLB webservices](http://www.gbif.org/developer/species) exposed through varnish, caching responses for 1h
+ - MACHINE_IP:5432 Postgres
+ - MACHINE_IP:5601 [Kibana logs](http://elk-docker.readthedocs.io/)
+ - MACHINE_IP:8983 Solr
+ - MACHINE_IP:9000 [CLB webservices](http://www.gbif.org/developer/species), directly
+ - MACHINE_IP:15672 RabbitMQ management plugin
+
+ 
 # TODO
 
-- deploy build artifacts (.jar) or perhaps just provide a "cli" container that allows for automated workflows
-- add postgres dump and load functionality
-- add zookeeper? what is it needed for? see https://github.com/gbif/checklistbank/blob/master/docs/INDEXING.md#messaging-flow
-- config rabbitmq properly
-- load data from DarwinCare Archives using the cli?
-- automate subset extraction from http://dl.dropbox.com/u/523458/Dyntaxa/Archive.zip (dataset from 2012-March-08)
+ - configure CLB species matching service (nubws)
+ - add make target for backbone builds
 
-# Ideas / Discussion
-
-- Regarding dl of relevant checklists/classficiations, such as NCBI, what are the urls for those? 
-
-## Low tech approach to maintain local taxonomy or "storage classification" checklist
-
-- Load data from text file in clb, could be versioned with git
-- Build a ui to allow export in that format
-- Schedule daily(?) upload to checklistbank via text file generated from taxonomy ui
-
-# Known issues
-
-One test fails - seems to require some "rabbitmq" config that currently fails:
-
-- https://github.com/mskyttner/nub-docker/issues/1
 
 # Further Reading
 

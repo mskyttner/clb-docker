@@ -15,5 +15,5 @@ clb:
   idleTimeout: 60000
 solr:
   serverType: HTTP
-  serverHome: http://solr:8983/solr
+  serverHome: http://solr:8983/solr/
   collection: checklistbank

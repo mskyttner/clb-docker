@@ -22,7 +22,7 @@ RUN curl -Ls -o checklistbank-ws.jar "http://repository.gbif.org/service/local/a
 
 ENTRYPOINT ["/sbin/tini", "--"]
 
-CMD sleep 5 && \
+CMD sleep 8 && \
     java -jar checklistbank-ws.jar -conf application.properties -httpPort 9000 -httpAdminPort 9001 -stopSecret stop
 
 
