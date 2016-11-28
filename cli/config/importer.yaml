@@ -22,5 +22,5 @@ clb:
   syncThreads: 8
 solr:
   serverType: HTTP
-  serverHome: http://solr:8983/solr/
+  serverHome: http://solr:8983/solr/checklistbank
   collection: checklistbank
