@@ -16,4 +16,4 @@ clb:
 solr:
   serverType: HTTP
   serverHome: http://solr:8983/solr
-  collection: clb
+  collection: checklistbank
