@@ -56,21 +56,64 @@ To start all services, test that they run and inspect the logs do:
 	make connect-cli
 	make test-web # launches ELK to show logs
 
+# Setting up the Docker host
+
+The installation requires a docker host, ie the docker daemon running on a machine under your control. Please follow https://docs.docker.com/machine/get-started/ to run a local VM using docker-machine (at the time of writing Docker for Mac was awefully slow and is not recommended!)
+
+## Alternatives for Mac: Docker Machine or VirtualBox
+
+An option is to use VirtualBox on your Mac, install a Linux on it, install Docker and docker-compose and run everything it there.
+
+Another option is Docker Machine. If you install it, you can use it to create or start the default virtualbox VM with at least 8g better 12g of memory:
+
+	docker-machine create --driver virtualbox --virtualbox-memory "8192" --virtualbox-cpu-count 2 default
+	docker-machine start default
+
+## Building and running the services locally
+
+The Makefile in this project provides simple targets for building and usage.
+
+To build docker images locally and start up the containers with docker-compose just do:
+
+	make build  # build docker images
+	make up  # start services
+
+Alternatively you can start the service with docker compose directly in the foreground to see all logs
+
+	docker-compose up
+
+To see the list of available containers run:
+
+	docker-compose ps
+
+You can view logs of container with
+
+	docker logs solr
+
 # ELK
 
 The [ELK stack](http://elk-docker.readthedocs.io/) is configured for central logging.
 The CLIs and webservice are logging through the logstash logback appender.
 You can access kibana to search for logs on port 5601, e.g. http://192.168.99.100:5601/ on Mac, or 
 
-# Ideas / Discussion
+# Services
 
-- Regarding dl of relevant checklists/classficiations, such as NCBI, what are the urls for those? 
+The app.conf file routes web traffic to the various services available to the outside world:
 
-## Low tech approach to maintain local taxonomy or "storage classification" checklist
+ - nub.docker/clbcache [CLB webservices](http://www.gbif.org/developer/species) exposed through varnish, caching responses for 1h
+ - nub.docker/ [Kibana logs](http://elk-docker.readthedocs.io/)
+ - nub.docker/solr
+ - nub.docker/clb [CLB webservices](http://www.gbif.org/developer/species), directly
+ - nub.docker/rabbit RabbitMQ management plugin
 
-- Load data from text (.yaml?) file into clb, could be interim stored in redis
-- Build a ui to allow export in that format
-- Schedule daily(?) upload to checklistbank via text file generated from taxonomy ui
+To start a crawl for a dataset you can use make again. See [datasets.txt](cli/datasets.txt) for all registered datasets
+
+	make crawl key=a739f783-08c1-4d47-a8cc-2e9e6e874202
+
+# TODO
+
+ - configure CLB species matching service (nubws)
+ - add make target for backbone builds
 
 # Further Reading
 

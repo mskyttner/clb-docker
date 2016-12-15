@@ -8,7 +8,10 @@ LABEL org.gbif.checklistbank.version="${CLBVERSION}"
 LABEL vendor="GBIF"
 LABEL version="${CLBVERSION}"
 
-RUN apk add --update --no-cache tini curl
+RUN apk add --update --no-cache tini bash curl
+
+RUN mkdir -p /etc/clb
+ADD default.vcl /etc/clb/
 
 RUN mkdir -p /usr/local/clb/ws/conf && cd /usr/local/clb/ws
 WORKDIR /usr/local/clb/ws

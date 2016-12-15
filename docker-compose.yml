@@ -26,16 +26,16 @@ services:
     # (note the static ip on the docker bridge)
     image: aacebedo/dnsdock:v1.15.0-amd64
     ports:
-      - 172.17.0.1:53:53/udp
+     - 172.17.0.1:53:53/udp
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-
+      
   elk:
     image: advantageous/elk:0.1
     command: /usr/local/bin/start.sh
       
   db:
-    image: gbifs/clbdb:v2.47-SNAPSHOT
+    image: gbifs/clbdb:2.47-SNAPSHOT
     container_name: db
     env_file: .env
 
@@ -43,46 +43,121 @@ services:
     image: rabbitmq
     env_file: .env
     hostname: rabbit
+    ports:
+      - "15672:15672"
 
   solr:
     image: solr
     env_file: .env
     hostname: solr
+    ports:
+      - 8983
+    environment:
+      - VERBOSE=yes
 
-  web:
-    # this is "routing" all web traffic and knows
-    # all other services in the SDN by their 
-    # docker-compose names which are used in the app.conf file
-    image: nginx:alpine
-    environment: 
-      - VIRTUAL_HOST=nub.docker
-    volumes:
-      - ./app.conf:/etc/nginx/conf.d/app.conf
-
-  clbws:
-    image: gbifs/clbws:v2.47-SNAPSHOT
-    hostname: ws
-    depends_on:
-      - db
-      - solr
-      - elk
-
-  nubws:
-    image: gbifs/nubws:v2.47-SNAPSHOT
-    hostname: nubws
-    depends_on:
-      - db
-      - solr
-      - elk
-
-  cli:
-    image: gbifs/clbcli:v2.47-SNAPSHOT
+  varnish:
+    image: million12/varnish
     env_file: .env
-    volumes:
-      - ./data:/usr/local/clb/data
+    environment:
+      - VCL_CONFIG=/etc/clb/default.vcl
+    ports:
+      - "80:80"
+    volumes_from:
+      - ws
+    depends_on:
+      - ws
+
+
+  ws:
+    image: gbifs/clbws:2.47-SNAPSHOT
+    environment:
+      - VIRTUAL_HOST=ws
+      - DNSDOCK_ALIAS=ws
+    depends_on:
+      - db
+      - solr
+      - elk
+      
+  clb-analyzer:
+    image: gbifs/clbcli:2.47-SNAPSHOT
+    env_file: .env
     depends_on:
       - db
       - solr
       - rabbit
       - elk
+    environment:
+      - COMMAND=analysis
+      - MAX_HEAP=256M
+    volumes_from:
+      - clb-crawler
 
+  clb-crawler:
+    image: gbifs/clbcli:2.47-SNAPSHOT
+    env_file: .env
+    depends_on:
+      - db
+      - solr
+      - rabbit
+      - elk
+    environment:
+      - COMMAND=crawler
+      - MAX_HEAP=256M
+    volumes:
+      - /usr/local/clb/data
+
+  clb-importer:
+    image: gbifs/clbcli:2.47-SNAPSHOT
+    env_file: .env
+    depends_on:
+      - db
+      - solr
+      - rabbit
+      - elk
+    environment:
+      - COMMAND=importer
+      - MAX_HEAP=2G
+    volumes_from:
+      - clb-crawler
+
+  clb-matcher:
+    image: gbifs/clbcli:2.47-SNAPSHOT
+    env_file: .env
+    depends_on:
+      - db
+      - solr
+      - rabbit
+      - elk
+    environment:
+      - COMMAND=dataset-matcher
+      - MAX_HEAP=2G
+    volumes_from:
+      - clb-crawler
+
+  clb-normalizer:
+    image: gbifs/clbcli:2.47-SNAPSHOT
+    env_file: .env
+    depends_on:
+      - db
+      - solr
+      - rabbit
+      - elk
+    environment:
+      - COMMAND=normalizer
+      - MAX_HEAP=2G
+    volumes_from:
+      - clb-crawler
+
+  clb-admin:
+    image: gbifs/clbcli:2.47-SNAPSHOT
+    env_file: .env
+    depends_on:
+      - db
+      - solr
+      - rabbit
+      - elk
+    command: /bin/bash
+    environment:
+      - MAX_HEAP=256M
+    volumes_from:
+      - clb-crawler

@@ -1,6 +1,6 @@
 poolSize: 1
 solrSyncThreads: 1
-chunkSize: 20000
+chunkSize: 10000
 chunkMinSize: 100
 messaging:
   host: rabbit
@@ -9,18 +9,18 @@ messaging:
   password: guest
 neo:
   neoRepository: /usr/local/clb/data/neo
-  mappedMemory: 2048
+  mappedMemory: 1024
 clb:
   serverName: db
   databaseName: clb
   user: postgres
   password: passw0rd12
-  maximumPoolSize: 12
+  maximumPoolSize: 8
   minimumIdle: 0
   idleTimeout: 60000
   connectionTimeout: 2000
-  syncThreads: 8
+  syncThreads: 4
 solr:
   serverType: HTTP
-  serverHome: http://solr:8983/solr
-  collection: clb
+  serverHome: http://solr:8983/solr/checklistbank
+  collection: checklistbank
