@@ -22,14 +22,15 @@ USER root
 ADD solr.xml $SOLRHOME/
 ADD core.properties $SOLRHOME/checklistbank/
 WORKDIR $SOLRHOME/checklistbank/conf/
-ADD https://raw.githubusercontent.com/gbif/checklistbank/${TAG}/checklistbank-solr/src/main/resources/solr/checklistbank/conf/schema.xml .
-ADD https://raw.githubusercontent.com/gbif/checklistbank/${TAG}/checklistbank-solr/src/main/resources/solr/checklistbank/conf/solrconfig.xml .
-ADD https://raw.githubusercontent.com/gbif/checklistbank/${TAG}/checklistbank-solr/src/main/resources/solr/checklistbank/conf/protwords.txt .
-ADD https://raw.githubusercontent.com/gbif/checklistbank/${TAG}/checklistbank-solr/src/main/resources/solr/checklistbank/conf/stopwords.txt .
-ADD https://raw.githubusercontent.com/gbif/checklistbank/${TAG}/checklistbank-solr/src/main/resources/solr/checklistbank/conf/synonyms.txt .
+ADD ./schema.xml .
+ADD ./solrconfig.xml .
+ADD ./protwords.txt .
+ADD ./stopwords.txt .
+ADD ./synonyms.txt .
 
 WORKDIR $SOLRHOME/lib
-RUN curl -Ls -o checklistbank-solr-plugins.jar "http://repository.gbif.org/service/local/artifact/maven/redirect?g=org.gbif.checklistbank&a=checklistbank-solr-plugins&c=shaded&r=gbif&v=${CLBVERSION}"
+ADD ./checklistbank-solr-plugins.jar .
+
 # update solrconfig
 RUN sed -i '5 i\
   <lib dir="/opt/solr/server/solr/lib" regex=".*\.jar" />' $SOLRHOME/checklistbank/conf/solrconfig.xml

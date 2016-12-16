@@ -26,11 +26,15 @@ ADD *.sh $CLI_HOME/
 ADD *.xml $CLI_HOME/
 ADD config config
 
-# ADD not working with redirects. Use curl instead
-# Warning! Docker caches RUN commands based on the cmd alone, not the retrieved content
-RUN curl -Ls -o checklistbank-cli.jar "http://repository.gbif.org/service/local/artifact/maven/redirect?g=org.gbif.checklistbank&a=checklistbank-cli&r=gbif&c=shaded&v=${CLBVERSION}"
+ADD ./wait-for-it.sh $CLI_HOME/
+ADD ./checklistbank-cli.jar .
 
 ENTRYPOINT ["/sbin/tini", "--"]
-# simple sleep to wait for PSQL and Rabbit server to start
-CMD sleep 10 && \
-    java -Xmx${MAX_HEAP} -jar $CLI_HOME/checklistbank-cli.jar $COMMAND --log-config $CLI_HOME/logback.xml --conf $CLI_HOME/config/${COMMAND}.yaml
+
+CMD ./wait-for-it.sh db:5432 -t 0 -- \
+	./wait-for-it.sh solr:8983 -t 0 -- \
+	./wait-for-it.sh elk:5601 -t 0 -- \
+	./wait-for-it.sh rabbit:15672 -t 0 -- \
+	java -Xmx${MAX_HEAP} -jar $CLI_HOME/checklistbank-cli.jar $COMMAND \
+	--log-config $CLI_HOME/logback.xml \
+	--conf $CLI_HOME/config/${COMMAND}.yaml
