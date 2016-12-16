@@ -5,7 +5,7 @@ messaging:
   password: guest
 neo:
   neoRepository: /usr/local/clb/data/neo
-  mappedMemory: 8192
+  mappedMemory: 2048
   batchSize: 10000
 clb:
   serverName: db

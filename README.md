@@ -7,70 +7,90 @@ Note: This is Work In Progress - the Makefile will change (and other things) and
 
 # Usage
 
-The Makefile provides targets (VERBs), for example you can:
+The `Makefile` provides targets (which are actions, like VERBs), for example you can:
 
 	make  # use to build and launch all services from scratch
 
-... or you can instead of `make all` launch granular actions step by step ...
+... or you can - instead of `make all` - launch the constituent more granular actions step-wise ...
 
-	make init  # cache/dl files locally
-	make build  # build docker images
-	make up  # start services (currently uses docker-compose)
+	make init  # to cache/dl files locally
+	make build  # to build docker images
+	make up  # to start services (currently uses docker-compose)
 
-... or push a binary to a remote registry ...
+... or you can release - push images to a remote registry ...
 
 	make release # build and push images to Docker Hub
 
-... or debug various services ...
+... or you can debug various services ...
 
 	make connect-db  # get db shell
 	make connect-cli  # get shell in checklistbank cli container
 
-... or issue a crawl ...
+... or issue a crawl to get and ingest data into the database ...
 	
+	make crawl-quick  # for test purposes
+	make crawl-dyntaxa  # to load Swedish taxonomy
+
+	# to set up a list of datasets, edit the cli/datasets.txt file
 	# use gbif.org to find a dataset, say Dyntaxa and you get src:
 	# http://www.gbif.org/dataset/de8934f4-a136-481c-a87a-b0b202b80a31
-	# then issue crawl command with this identifier
+	# put that identifier into the datasets.txt file or you can do:
+	# make crawl key=de8934f4-a136-481c-a87a-b0b202b80a31
 
-	make crawl key=de8934f4-a136-481c-a87a-b0b202b80a31
+The `docker-compose.yml` file provides the various components of the system (NOUNs), for example:
 
+	web
+	db
 
-The docker-compose.yml file provides components (NOUNs), for example:
+	# core checklistbank services from GBIF
+	ws
+	admin
+	crawler
+	importer
+	matcher
+	normalizer
+	analyzer
 
-	proxy (nginx reverse proxy, provides the only ports open to the "outside", used for ssl termination and routing http traffic)
-	dnsdock (for service discovery from the host machine, on the "inside" of the software defined network)
-	elk (for troubleshooting and looking at logs)
+	# various "infrastructure" services
+	proxy 
+	dnsdock 
+	elk 
+	solr
+	rabbit
+	varnish
 
-	solr (for search)
-	db (uses postgres)
-	web (nginx front-end to web services)
-	rabbit (message bus)
-	cli (checklistbank cli container)
+The "web" component provides a front or portal to the rest of the services that provide http services or management interfaces, most importantly the various checklistbank services. This component receives traffic from the "proxy" component that routes http traffic from the outside, this is an nginx reverse proxy that provides the only way in from the "outside" (port 80 and 443) so it also provides ssl termination and that way the rest of the services don't have to provide ssl individually. For details, see the "app.conf" file which provides the rules to route the web traffic to the various services available to the outside world.
 
-	... etc ...
+The core checklistbank services from GBIF includes "ws" with [the GBIF API documented here](http://www.gbif.org/developer/species)... To start a crawl for a dataset you can use make again. See [datasets.txt](cli/datasets.txt) for all registered datasets.
+
+The dnsdock component is used for service discovery from within the host machine, on the "inside" of the software defined network. With this component, it becomes possible for you to reach the various components inside the SDN using commands like "ping rabbitmq.docker". For setting up DNS to work properly on your host machine, please follow the setup instructions at https://github.com/mskyttner/dns-test-docker. The "elk" component is for troubleshooting and looking at all the logs from the various services. This component uses the [ELK stack](http://elk-docker.readthedocs.io/) and is configured for central logging. The CLIs and webservice are logging through the logstash logback appender.
 
 To start all services, test that they run and inspect the logs do:
 
-	make up
-	make connect-db
-	make connect-cli
-	make test-web # launches ELK to show logs
+	make
+	make test
 
-# ELK
+# Notes on setting up Docker
 
-The [ELK stack](http://elk-docker.readthedocs.io/) is configured for central logging.
-The CLIs and webservice are logging through the logstash logback appender.
-You can access kibana to search for logs on port 5601, e.g. http://192.168.99.100:5601/ on Mac, or 
+The installation requires a docker host under your control, ie a machine with the docker daemon running. 
 
-# Ideas / Discussion
+https://docs.docker.com/engine/installation/
 
-- Regarding dl of relevant checklists/classficiations, such as NCBI, what are the urls for those? 
+## Alternatives for Mac and Windows: Docker Machine or VirtualBox
 
-## Low tech approach to maintain local taxonomy or "storage classification" checklist
+You might want to run a local VM if you are on Mac or Windows (at the time of writing Docker for Mac was awefully slow and is not recommended!)
 
-- Load data from text (.yaml?) file into clb, could be interim stored in redis
-- Build a ui to allow export in that format
-- Schedule daily(?) upload to checklistbank via text file generated from taxonomy ui
+An option is to use VirtualBox on your Mac or Windows machine, install a Linux on it, then install Docker and docker-compose and run everything it there.
+
+Another option is Docker Machine. Please follow https://docs.docker.com/machine/get-started/. If you install it, you can use it to create or start the default virtualbox VM with at least 8g better 12g of memory:
+
+	docker-machine create --driver virtualbox --virtualbox-memory "8192" --virtualbox-cpu-count 2 default
+	docker-machine start default
+
+# TODO
+
+ - configure CLB species matching service (nubws)
+ - add make target for backbone builds
 
 # Further Reading
 
