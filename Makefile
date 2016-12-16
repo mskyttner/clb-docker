@@ -19,7 +19,7 @@ SOLR_BASE = https://raw.githubusercontent.com/gbif/checklistbank/master/checklis
 
 MVN_REPO = http://repository.gbif.org/service/local/artifact/maven/redirect?g=org.gbif.checklistbank
 
-all: build up
+all: init build up
 .PHONY: all
 
 init:
@@ -70,6 +70,13 @@ init:
 		curl --progress -L -o db/schema.sql \
 			"https://raw.githubusercontent.com/gbif/checklistbank/master/docs/schema.sql"
 
+clean:
+	rm -f nub-ws/wait-for-it.sh cli/wait-for-it.sh ws/wait-for-it.sh \
+		ws/checklistbank-ws.jar \
+		cli/checklistbank-cli.jar \
+		solr/schema.xml solr/solrconfig.xml solr/checklistbank-solr-plugins.jar \
+		db/schema.sql
+
 build: build-db build-solr build-ws build-nub-ws build-cli
 
 build-db:
@@ -111,10 +118,26 @@ backup-db:
 	docker exec -it db \
 		bash -c "pg_dump -U $(POSTGRES_USER) -d $(POSTGRES_DB) > /tmp/clb.sql"
 
+restore-dyntaxa-dump:
+
+	test -f clb.sql || curl -L --progress -o clb.sql \
+		"https://nrmowncloud.nrm.se/owncloud/index.php/s/0tiY0uLW4wqQ9p7/download?path=%2F&files=clb_structure_and_data.dump"
+
+	docker cp clb.sql db:/tmp/clb.sql
+
 restore-db:
-	@echo "This will not work if the database already exists"
+
 	docker exec -it db \
-		psql $(POSTGRES_USER) -d $(POSTGRES_DB) -f /tmp/clb.sql
+		psql -U $(POSTGRES_USER) -c "select pg_terminate_backend(pg_stat_activity.pid) from pg_stat_activity where datname = 'clb';"
+
+	docker exec -it db \
+		psql -U $(POSTGRES_USER) -c "drop database clb;"
+
+	docker exec -it db \
+		psql -U $(POSTGRES_USER) -c "create database clb;"
+
+	docker exec -it db \
+		psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -f /tmp/clb.sql
 
 connect-cli:
 	@docker-compose run admin bash
