@@ -88,7 +88,7 @@ services:
       - elk
       
   crawler:
-    image: gbifs/clbcli:2.47-SNAPSHOT
+    image: gbifs/clbcli:2.47
     env_file: .env
     depends_on:
       - db
@@ -103,7 +103,7 @@ services:
       - ./cli/datasets.txt:/usr/local/clb/data/datasets.txt
 
   analyzer:
-    image: gbifs/clbcli:2.47-SNAPSHOT
+    image: gbifs/clbcli:2.47
     env_file: .env
     depends_on:
       - db
@@ -117,7 +117,7 @@ services:
       - crawler
 
   importer:
-    image: gbifs/clbcli:2.47-SNAPSHOT
+    image: gbifs/clbcli:2.47
     env_file: .env
     depends_on:
       - db
@@ -131,7 +131,7 @@ services:
       - crawler
 
   matcher:
-    image: gbifs/clbcli:2.47-SNAPSHOT
+    image: gbifs/clbcli:2.47
     env_file: .env
     depends_on:
       - db
@@ -145,7 +145,7 @@ services:
       - crawler
 
   normalizer:
-    image: gbifs/clbcli:2.47-SNAPSHOT
+    image: gbifs/clbcli:2.47
     env_file: .env
     depends_on:
       - db
@@ -159,7 +159,7 @@ services:
       - crawler
 
   admin:
-    image: gbifs/clbcli:2.47-SNAPSHOT
+    image: gbifs/clbcli:2.47
     env_file: .env
     depends_on:
       - db
