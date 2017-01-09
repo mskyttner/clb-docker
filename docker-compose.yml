@@ -35,7 +35,7 @@ services:
     command: /usr/local/bin/start.sh
       
   db:
-    image: gbifs/clbdb:2.47-SNAPSHOT
+    image: gbifs/clbdb:2.47
     container_name: db
     env_file: .env
 
@@ -78,7 +78,7 @@ services:
       - ws
 
   ws:
-    image: gbifs/clbws:2.47-SNAPSHOT
+    image: gbifs/clbws:2.47
     container_name: ws
     environment:
       - DNSDOCK_ALIAS=ws
