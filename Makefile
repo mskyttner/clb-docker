@@ -15,7 +15,7 @@ PWD := $(shell pwd)
 USR := $(shell id -u)
 GRP := $(shell id -g)
 
-MVN_REPO = http://repository.gbif.org/content/groups/gbif/org/gbif/checklistbank/checklistbank-cli/
+MVN_REPO = http://repository.gbif.org/content/groups/gbif/org/gbif/checklistbank
 
 SOLR_BASE = https://raw.githubusercontent.com/gbif/checklistbank/master/checklistbank-solr/src/main/resources/solr/checklistbank/conf
 
@@ -35,20 +35,13 @@ init:
 	@cp wait-for-it.sh cli
 	@cp wait-for-it.sh ws
 
-	#@test -f ws/checklistbank-ws.jar || \
-	#	curl --progress -L -o ws/checklistbank-ws.jar \
-	#		"$(MVN_REPO)&a=checklistbank-ws&r=gbif&v=$(CLBVERSION)"
-
 	@test -f ws/checklistbank-ws.jar || \
-		curl --progress -L -o ws/checklistbank-ws.jar\
-			http://repository.gbif.org/content/groups/gbif/org/gbif/checklistbank/checklistbank-ws/2.47/checklistbank-ws-2.47.jar
+		curl --progress -L -o ws/checklistbank-ws.jar \
+			"$(MVN_REPO)/checklistbank-ws/$(CLBVERSION)/checklistbank-ws-$(CLBVERSION).jar"
 
 	@test -f cli/checklistbank-cli.jar || \
 		curl --progress -L -o cli/checklistbank-cli.jar \
-			"$(MVN_REPO)$(CLBVERSION)/checklistbank-cli-$(CLBVERSION)-shaded.jar"
-	#@test -f cli/checklistbank-cli.jar || \
-	#	curl --progress -L -o cli/checklistbank-cli.jar \
-	#		http://repository.gbif.org/content/groups/gbif/org/gbif/checklistbank/checklistbank-cli/2.47/checklistbank-cli-2.47.jar
+			"$(MVN_REPO)/checklistbank-cli/$(CLBVERSION)/checklistbank-cli-$(CLBVERSION)-shaded.jar"
 	
 	@test -f solr/schema.xml || \
 		curl --progress -L -o solr/schema.xml \
