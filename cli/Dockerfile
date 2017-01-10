@@ -1,7 +1,10 @@
 FROM java:8-jre-alpine
 
-# CLBVERSION to be configured outside
-ENV CLBVERSION 2.47-SNAPSHOT
+# you can use docker build -t gbifs/clbcli:2.48 --build-arg CLBVERSION=2.48
+# the default if no build-arg is used will be 2.48
+
+ARG CLBVERSION
+ENV CLBVERSION ${CLBVERSION:-2.48}
 
 MAINTAINER mdoering@gbif.org
 LABEL org.gbif.checklistbank.version="${CLBVERSION}"
