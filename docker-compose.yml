@@ -60,13 +60,6 @@ services:
     container_name: rabbit
     env_file: .env
 
-  solr:
-    image: solr
-    env_file: .env
-    hostname: solr
-    environment:
-      - VERBOSE=yes
-
   varnish:
     image: million12/varnish
     env_file: .env
@@ -76,6 +69,13 @@ services:
       - ws
     depends_on:
       - ws
+
+  solr:
+    image: gbifs/clbsolr:2.47
+    env_file: .env
+    hostname: solr
+    environment:
+      - VERBOSE=yes
 
   ws:
     image: gbifs/clbws:2.47
