@@ -2,7 +2,7 @@
 include .env
 
 DOCKER_GROUP = gbifs
-CLBVERSION = 2.47-SNAPSHOT
+CLBVERSION = 2.48
 CLB_URL = https://github.com/gbif/checklistbank
 NAME = $(DOCKER_GROUP)/clb
 VERSION = $(TRAVIS_BUILD_ID)
@@ -15,9 +15,10 @@ PWD := $(shell pwd)
 USR := $(shell id -u)
 GRP := $(shell id -g)
 
+MVN_REPO = http://repository.gbif.org/content/groups/gbif/org/gbif/checklistbank
+
 SOLR_BASE = https://raw.githubusercontent.com/gbif/checklistbank/master/checklistbank-solr/src/main/resources/solr/checklistbank/conf
 
-MVN_REPO = http://repository.gbif.org/service/local/artifact/maven/redirect?g=org.gbif.checklistbank
 
 all: init build up
 .PHONY: all
@@ -36,11 +37,19 @@ init:
 
 	@test -f ws/checklistbank-ws.jar || \
 		curl --progress -L -o ws/checklistbank-ws.jar \
-			"$(MVN_REPO)&a=checklistbank-ws&r=gbif&v=$(CLBVERSION)"
+			"$(MVN_REPO)/checklistbank-ws/$(CLBVERSION)/checklistbank-ws-$(CLBVERSION).jar"
+
+	@test -f nub-ws/checklistbank-nub-ws.jar || \
+		curl --progress -L -o nub-ws/checklistbank-nub-ws.jar \
+			"$(MVN_REPO)/checklistbank-nub-ws/$(CLBVERSION)/checklistbank-nub-ws-$(CLBVERSION).jar"
 
 	@test -f cli/checklistbank-cli.jar || \
 		curl --progress -L -o cli/checklistbank-cli.jar \
-			"$(MVN_REPO)&a=checklistbank-cli&r=gbif&c=shaded&v=$(CLBVERSION)"
+			"$(MVN_REPO)/checklistbank-cli/$(CLBVERSION)/checklistbank-cli-$(CLBVERSION)-shaded.jar"
+
+	@test -f solr/checklistbank-solr-plugins.jar || \
+		curl --progress -L -o solr/checklistbank-solr-plugins.jar \
+			"$(MVN_REPO)/checklistbank-solr-plugins/$(CLBVERSION)/checklistbank-solr-plugins-$(CLBVERSION)-shaded.jar"
 	
 	@test -f solr/schema.xml || \
 		curl --progress -L -o solr/schema.xml \
@@ -62,10 +71,6 @@ init:
 		curl --progress -L -o solr/synonyms.txt \
 			"$(SOLR_BASE)/synonyms.txt"
 
-	@test -f solr/checklistbank-solr-plugins.jar || \
-		curl --progress -L -o solr/checklistbank-solr-plugins.jar \
-			"$(MVN_REPO)&a=checklistbank-solr-plugins&c=shaded&r=gbif&v=$(CLBVERSION)"
-
 	@test -f db/schema.sql || \
 		curl --progress -L -o db/schema.sql \
 			"https://raw.githubusercontent.com/gbif/checklistbank/master/docs/schema.sql"
@@ -73,6 +78,7 @@ init:
 clean:
 	rm -f nub-ws/wait-for-it.sh cli/wait-for-it.sh ws/wait-for-it.sh \
 		ws/checklistbank-ws.jar \
+		nub-ws/checklistbank-nub-ws.jar \
 		cli/checklistbank-cli.jar \
 		solr/schema.xml solr/solrconfig.xml solr/checklistbank-solr-plugins.jar \
 		db/schema.sql
@@ -81,25 +87,29 @@ build: build-db build-solr build-ws build-nub-ws build-cli
 
 build-db:
 	@echo "Building db image..."
-	@docker build -t $(DOCKER_GROUP)/clbdb:$(CLBVERSION) db
+	@docker build -t $(DOCKER_GROUP)/clbdb:$(CLBVERSION) db \
+		--build-arg CLBVERSION=$(CLBVERSION)
 
 build-solr:
 	@echo "Building solr image..."
-	@docker build -t $(DOCKER_GROUP)/clbsolr:$(CLBVERSION) solr
+	@docker build -t $(DOCKER_GROUP)/clbsolr:$(CLBVERSION) solr \
+		--build-arg CLBVERSION=$(CLBVERSION)
 
 build-ws:
 	@echo "Building ws image..."
-	@docker build -t $(DOCKER_GROUP)/clbws:$(CLBVERSION) ws
+	@docker build -t $(DOCKER_GROUP)/clbws:$(CLBVERSION) ws \
+		--build-arg CLBVERSION=$(CLBVERSION)
 
 build-nub-ws:
 	@echo "Building nub-ws image..."
-	@docker build -t $(DOCKER_GROUP)/nubws:$(CLBVERSION) nub-ws
+	@docker build -t $(DOCKER_GROUP)/nubws:$(CLBVERSION) nub-ws \
+		--build-arg CLBVERSION=$(CLBVERSION)
 
 build-cli:
 	@echo "Building cli image..."
-	@docker build -t $(DOCKER_GROUP)/clbcli:$(CLBVERSION) cli
-
-
+	@docker build -t $(DOCKER_GROUP)/clbcli:$(CLBVERSION) cli \
+		--build-arg CLBVERSION=$(CLBVERSION)
+		
 up:
 	@echo "Starting services..."
 	@docker-compose up -d

@@ -1,7 +1,10 @@
 FROM java:8-jre-alpine
 
+ARG CLBVERSION
+ENV CLBVERSION ${CLBVERSION:-2.48}
+
 ENV JAVA_OPTIONS="-Xmx512m"
-ENV CLBVERSION=2.47-SNAPSHOT
+
 
 MAINTAINER mdoering@gbif.org
 LABEL org.gbif.checklistbank.version="${CLBVERSION}"
