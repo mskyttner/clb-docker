@@ -35,7 +35,7 @@ services:
     command: /usr/local/bin/start.sh
       
   db:
-    image: gbifs/clbdb:2.47
+    image: gbifs/clbdb:2.48
     container_name: db
     env_file: .env
 
@@ -71,7 +71,7 @@ services:
       - ws
 
   solr:
-    image: gbifs/clbsolr:2.47
+    image: gbifs/clbsolr:2.48
     env_file: .env
     hostname: solr
     environment:
@@ -88,7 +88,7 @@ services:
       - elk
       
   crawler:
-    image: gbifs/clbcli:2.47
+    image: gbifs/clbcli:2.48
     env_file: .env
     depends_on:
       - db
@@ -103,7 +103,7 @@ services:
       - ./cli/datasets.txt:/usr/local/clb/data/datasets.txt
 
   analyzer:
-    image: gbifs/clbcli:2.47
+    image: gbifs/clbcli:2.48
     env_file: .env
     depends_on:
       - db
@@ -117,7 +117,7 @@ services:
       - crawler
 
   importer:
-    image: gbifs/clbcli:2.47
+    image: gbifs/clbcli:2.48
     env_file: .env
     depends_on:
       - db
@@ -131,7 +131,7 @@ services:
       - crawler
 
   matcher:
-    image: gbifs/clbcli:2.47
+    image: gbifs/clbcli:2.48
     env_file: .env
     depends_on:
       - db
@@ -145,7 +145,7 @@ services:
       - crawler
 
   normalizer:
-    image: gbifs/clbcli:2.47
+    image: gbifs/clbcli:2.48
     env_file: .env
     depends_on:
       - db
@@ -159,7 +159,7 @@ services:
       - crawler
 
   admin:
-    image: gbifs/clbcli:2.47
+    image: gbifs/clbcli:2.48
     env_file: .env
     depends_on:
       - db
