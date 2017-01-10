@@ -1,14 +1,12 @@
 FROM solr:5.4.1
 
-LABEL org.gbif.checklistbank.version="${CLBVERSION}"
-LABEL vendor="GBIF"
-LABEL version="${CLBVERSION}"
+ENV CLBVERSION 2.47
+ENV TAG master 
+ENV SOLRHOME /opt/solr/server/solr
 
-# CLBVERSION to be configured outside
-ENV CLBVERSION 2.47-SNAPSHOT
-#checklistbank-2.46
-ENV TAG=master 
-ENV SOLRHOME=/opt/solr/server/solr
+LABEL org.gbif.checklistbank.version="${CLBVERSION}" \
+	vendor="GBIF" \
+	version="${CLBVERSION}"
 
 RUN rmdir $SOLRHOME/mycores && \
     rm -Rf $SOLRHOME/configsets && \
