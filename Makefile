@@ -65,7 +65,7 @@ init:
 
 	@test -f solr/checklistbank-solr-plugins.jar || \
 		curl --progress -L -o solr/checklistbank-solr-plugins.jar \
-			"$(MVN_REPO)&a=checklistbank-solr-plugins&c=shaded&r=gbif&v=$(CLBVERSION)"
+			"$(MVN_REPO)/checklistbank-solr-plugins/$(CLBVERSION)/checklistbank-solr-plugins-$(CLBVERSION)-shaded.jar"
 
 	@test -f db/schema.sql || \
 		curl --progress -L -o db/schema.sql \
